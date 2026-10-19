@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0e1a" />
+    <title>Virtual Hallo'weenie</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <div class="scene-frame" aria-label="Virtual Hallo'weenie scene">
+        <div class="scene" id="scene">
+          <div class="sky"></div>
+          <div class="moon"></div>
+          <div class="mist mist-1"></div>
+          <div class="mist mist-2"></div>
+
+          <div class="cloud cloud-1"></div>
+          <div class="cloud cloud-2"></div>
+
+          <div class="house" aria-hidden="true">
+            <div class="roof"></div>
+            <div class="door"></div>
+            <div class="window window-left"></div>
+            <div class="window window-right"></div>
+            <div class="chimney"></div>
+          </div>
+
+          <div class="fence" aria-hidden="true"></div>
+
+          <div class="graveyard" aria-label="graveyard">
+            <button class="grave grave-1 story-target" data-story="lantern" data-target="grave" aria-label="Ancient grave">
+              <span class="grave-rock"></span>
+            </button>
+            <button class="grave grave-2 story-target" data-story="willow" data-target="grave-willow" aria-label="Wandering grave"> 
+              <span class="grave-rock"></span>
+            </button>
+            <button class="grave grave-3 story-target" data-story="crow" data-target="grave-crow" aria-label="Lone grave">
+              <span class="grave-rock"></span>
+            </button>
+          </div>
+
+          <div class="pumpkin-patch" aria-label="pumpkin patch">
+            <button class="pumpkin pumpkin-large story-target" data-story="lantern" data-target="pumpkin" aria-label="Large pumpkin">
+              <span class="stem"></span>
+            </button>
+            <button class="pumpkin pumpkin-mid story-target" data-story="crow" data-target="pumpkin-crow" aria-label="Mid pumpkin">
+              <span class="stem"></span>
+            </button>
+            <button class="pumpkin pumpkin-small story-target" data-story="willow" data-target="pumpkin-willow" aria-label="Small pumpkin">
+              <span class="stem"></span>
+            </button>
+          </div>
+
+          <div class="lantern-post lantern-left story-target" data-story="crow" data-target="lantern" aria-label="Lantern post"></div>
+          <div class="lantern-post lantern-right story-target" data-story="willow" data-target="lantern-willow" aria-label="Moon lantern"></div>
+
+          <div class="tree tree-main" aria-hidden="true">
+            <div class="trunk"></div>
+            <div class="branch branch-left"></div>
+            <div class="branch branch-right"></div>
+            <div class="bough bough-1"></div>
+            <div class="bough bough-2"></div>
+          </div>
+
+          <div class="bat bat-1" aria-hidden="true"></div>
+          <div class="bat bat-2" aria-hidden="true"></div>
+          <div class="bat bat-3" aria-hidden="true"></div>
+          <div class="spark spark-1"></div>
+          <div class="spark spark-2"></div>
+          <div class="spark spark-3"></div>
+
+          <div class="hud" aria-live="polite">
+            <div class="status-badge">Moonlit grounds</div>
+            <div class="hint" id="hintText">The dark is listening for a first clue.</div>
+          </div>
+
+          <button class="pause-toggle" id="pauseToggle" aria-label="Pause or resume the scene">Pause</button>
+
+          <div class="story-overlay hidden" id="storyOverlay" aria-live="assertive">
+            <p class="story-kicker">haunted whisper</p>
+            <h2 id="storyTitle">Lantern Trail</h2>
+            <p id="storyText">The pumpkins glow brighter, and the path begins to hum.</p>
+          </div>
+        </div>
+
+        <div class="start-screen" id="startScreen">
+          <div class="start-panel">
+            <p class="eyebrow">Virtual Hallo'weenie</p>
+            <h1>Enter the grounds</h1>
+            <p>
+              A moonlit autumn trail where whispers drift through the pumpkins and the haunted house waits for a curious visitor.
+            </p>
+            <button id="enterButton" type="button">Enter</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
