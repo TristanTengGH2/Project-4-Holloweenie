@@ -6,6 +6,9 @@ const hintText = document.getElementById('hintText');
 const storyOverlay = document.getElementById('storyOverlay');
 const storyTitle = document.getElementById('storyTitle');
 const storyText = document.getElementById('storyText');
+const midwayHotspots = [...document.querySelectorAll('.midway-hotspot')];
+const storyProgress = document.getElementById('storyProgress');
+const progressSteps = [...document.querySelectorAll('.progress-step')];
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -14,65 +17,99 @@ let isPaused = false;
 let storyPlaying = false;
 let audioContext = null;
 let ambientWind = null;
-let ambientOsc = null;
 let owlTimer = null;
+let activeStoryHint = '';
 
-const stories = {
-  lantern: {
-    title: 'Lantern Trail',
-    intro: 'The jack-o-lanterns flicker to life, and the moonlit trail begins to glow.',
-    sequence: ['pumpkin', 'lantern', 'grave'],
-    hints: [
-      'Something in the patch is waking up.',
-      'The moonlit lantern feels warmer than the rest.',
-      'The oldest stone is listening for the final clue.'
-    ],
-    current: 0,
-    done: false
-  },
-  crow: {
-    title: 'Crow Call',
-    intro: 'A feathered hush rises from the roof and the crows begin to circle.',
-    sequence: ['lantern', 'pumpkin-crow', 'grave-crow'],
-    hints: [
-      'A hush moves through the yard; the path starts with the lantern.',
-      'The hallow pumpkin answers with a darker glow.',
-      'The final stone is the one that keeps the whisper.'
-    ],
-    current: 0,
-    done: false
-  },
-  willow: {
-    title: 'Willow Whisper',
-    intro: 'The tree leans closer, and the dark whispers begin to stretch.',
-    sequence: ['pumpkin-willow', 'lantern-willow', 'grave-willow'],
-    hints: [
-      'The tree keeps a secret in its smallest pumpkin.',
-      'The silver lantern answers next.',
-      'The final grave is the one that returns an echo.'
-    ],
-    current: 0,
-    done: false
-  }
+const timerGroups = {
+  hints: [],
+  story: []
 };
 
-const targetMap = new Map();
+const lastTicket = {
+  sequence: ['booth-lantern', 'counter-pumpkin', 'pumpkin-face'],
+  current: 0,
+  complete: false
+};
 
-const createStoryTargetLookup = () => {
-  document.querySelectorAll('.story-target').forEach((element) => {
-    const key = `${element.dataset.story}:${element.dataset.target}`;
-    targetMap.set(key, element);
+const progressHints = [
+  'A warm glimmer near the booth is waiting to be noticed.',
+  'Something small watches from the place where tickets changed hands.',
+  'The largest grin is holding the final spark.'
+];
+
+const targetTones = {
+  'booth-lantern': 340,
+  'counter-pumpkin': 430,
+  'pumpkin-face': 540
+};
+
+function startTimer(timer) {
+  timer.startedAt = performance.now();
+  timer.timeoutId = window.setTimeout(() => {
+    const group = timerGroups[timer.group];
+    const index = group.indexOf(timer);
+    if (index >= 0) group.splice(index, 1);
+    timer.callback();
+  }, timer.remaining);
+}
+
+function scheduleTimer(group, delay, callback) {
+  const timer = {
+    group,
+    callback,
+    remaining: delay,
+    startedAt: 0,
+    timeoutId: null
+  };
+
+  timerGroups[group].push(timer);
+  startTimer(timer);
+  return timer;
+}
+
+function clearTimerGroup(group) {
+  timerGroups[group].forEach((timer) => window.clearTimeout(timer.timeoutId));
+  timerGroups[group] = [];
+}
+
+function pauseTimers() {
+  Object.values(timerGroups).flat().forEach((timer) => {
+    if (timer.timeoutId === null) return;
+    window.clearTimeout(timer.timeoutId);
+    timer.remaining = Math.max(0, timer.remaining - (performance.now() - timer.startedAt));
+    timer.timeoutId = null;
   });
-};
+}
+
+function resumeTimers() {
+  Object.values(timerGroups).flat().forEach((timer) => {
+    if (timer.timeoutId === null) startTimer(timer);
+  });
+}
 
 function setHint(text) {
   hintText.textContent = text;
+}
+
+function getExplorationHint() {
+  if (lastTicket.complete) {
+    return 'The ticket is stamped. Tap the booth lantern to replay the sequence.';
+  }
+
+  return progressHints[lastTicket.current];
+}
+
+function setMidwayHotspotsEnabled(enabled) {
+  midwayHotspots.forEach((hotspot) => {
+    hotspot.disabled = !enabled;
+  });
 }
 
 function setPaused(paused) {
   isPaused = paused;
   pauseToggle.textContent = paused ? 'Resume' : 'Pause';
   scene.classList.toggle('is-paused', paused);
+  setMidwayHotspotsEnabled(isStarted && !paused && !storyPlaying);
 
   if (audioContext && audioContext.state === 'running' && paused) {
     audioContext.suspend();
@@ -83,9 +120,11 @@ function setPaused(paused) {
   }
 
   if (paused) {
-    setHint('The yard is paused. Press resume to listen again.');
-  } else if (!storyPlaying) {
-    setHint('The dark is listening for a first clue.');
+    pauseTimers();
+    setHint('The midway is paused. Press resume when you are ready.');
+  } else {
+    resumeTimers();
+    setHint(storyPlaying ? activeStoryHint : getExplorationHint());
   }
 }
 
@@ -173,21 +212,6 @@ function playTone({ frequency = 180, duration = 0.26, type = 'sine', volume = 0.
   oscillator.stop(ctx.currentTime + duration);
 }
 
-function triggerSuccessEffect(target) {
-  target.classList.remove('active');
-  target.classList.add('correct');
-  playTone({ frequency: 420, duration: 0.2, type: 'triangle', volume: 0.08 });
-  setTimeout(() => target.classList.remove('correct'), 380);
-}
-
-function resetStoryProgress(storyKey) {
-  const story = stories[storyKey];
-  story.current = 0;
-  document.querySelectorAll(`.story-target[data-story="${storyKey}"]`).forEach((element) => {
-    element.classList.remove('active', 'correct', 'success');
-  });
-}
-
 function setStoryOverlay(title, text, visible = true) {
   storyTitle.textContent = title;
   storyText.textContent = text;
@@ -195,87 +219,191 @@ function setStoryOverlay(title, text, visible = true) {
   storyOverlay.classList.toggle('visible', visible);
 }
 
-function showStorySequence(storyKey) {
-  const story = stories[storyKey];
-  const targets = document.querySelectorAll(`.story-target[data-story="${storyKey}"]`);
-  storyPlaying = true;
-  scene.classList.add('story-lock');
-  setStoryOverlay(story.title, story.intro, true);
-
-  targets.forEach((element) => {
-    element.classList.remove('active', 'correct', 'success');
-    element.classList.add('success');
+function updateProgress() {
+  progressSteps.forEach((step, index) => {
+    step.classList.toggle('complete', index < lastTicket.current);
   });
-
-  playTone({ frequency: 160, duration: 0.6, type: 'sawtooth', volume: 0.08 });
-  playTone({ frequency: 230, duration: 0.5, type: 'triangle', volume: 0.07 });
-  playTone({ frequency: 300, duration: 0.7, type: 'sine', volume: 0.06 });
-
-  setHint(`${story.title} unfolds. The whole yard is holding its breath.`);
-
-  window.setTimeout(() => {
-    targets.forEach((element) => element.classList.remove('success'));
-    setStoryOverlay(story.title, story.intro, false);
-    scene.classList.remove('story-lock');
-    storyPlaying = false;
-    setHint('The scene is awake again. Something else is still watching.');
-  }, 6200);
+  storyProgress.setAttribute('aria-label', `The Last Ticket progress: ${lastTicket.current} of 3`);
 }
 
-function handleTargetTap(event) {
+function resetProgressiveHints() {
+  clearTimerGroup('hints');
+  midwayHotspots.forEach((hotspot) => {
+    hotspot.classList.remove('hint-shimmer', 'hint-outline');
+  });
+
+  if (!isStarted || isPaused || storyPlaying || lastTicket.complete) return;
+
+  const expectedTarget = midwayHotspots.find((hotspot) => (
+    hotspot.dataset.midwayTarget === lastTicket.sequence[lastTicket.current]
+  ));
+  if (!expectedTarget) return;
+
+  scheduleTimer('hints', 6000, () => {
+    expectedTarget.classList.add('hint-shimmer');
+  });
+  scheduleTimer('hints', 12000, () => {
+    setHint(progressHints[lastTicket.current]);
+  });
+  scheduleTimer('hints', 20000, () => {
+    expectedTarget.classList.remove('hint-shimmer');
+    expectedTarget.classList.add('hint-outline');
+  });
+}
+
+function showTapFeedback(target, type) {
+  midwayHotspots.forEach((hotspot) => {
+    hotspot.classList.remove('tap-correct', 'tap-incorrect');
+  });
+
+  const feedbackClass = type === 'correct' ? 'tap-correct' : 'tap-incorrect';
+  target.classList.add(feedbackClass);
+
+  if (!reduceMotion) {
+    target.addEventListener('animationend', () => {
+      target.classList.remove(feedbackClass);
+    }, { once: true });
+  }
+}
+
+function resetLastTicket() {
+  clearTimerGroup('story');
+  lastTicket.current = 0;
+  lastTicket.complete = false;
+  storyPlaying = false;
+  activeStoryHint = '';
+  scene.classList.remove(
+    'story-lock',
+    'story-playing',
+    'story-last-ticket',
+    'phase-awake',
+    'phase-ticket',
+    'phase-stamp',
+    'phase-release'
+  );
+  midwayHotspots.forEach((hotspot) => {
+    hotspot.classList.remove('step-complete', 'tap-correct', 'tap-incorrect', 'hint-shimmer', 'hint-outline');
+  });
+  updateProgress();
+  setStoryOverlay('The Last Ticket', 'One moonlit ticket—for our bravest guest.', false);
+}
+
+function finishLastTicketStory() {
+  clearTimerGroup('story');
+  storyPlaying = false;
+  activeStoryHint = '';
+  scene.classList.remove(
+    'story-lock',
+    'story-playing',
+    'story-last-ticket',
+    'phase-awake',
+    'phase-ticket',
+    'phase-stamp',
+    'phase-release'
+  );
+  setStoryOverlay('The Last Ticket', '“One moonlit ticket—for our bravest guest.”', false);
+  setMidwayHotspotsEnabled(!isPaused);
+  setHint('The ticket is stamped. Tap the booth lantern to replay the sequence.');
+}
+
+function startLastTicketStory() {
+  clearTimerGroup('hints');
+  lastTicket.complete = true;
+  storyPlaying = true;
+  activeStoryHint = 'The ticket booth creaks awake beneath the moon.';
+  setMidwayHotspotsEnabled(false);
+  scene.classList.add('story-lock', 'story-playing', 'story-last-ticket', 'phase-awake');
+  setHint(activeStoryHint);
+  playTone({ frequency: 190, duration: 0.55, type: 'sawtooth', volume: 0.05 });
+
+  scheduleTimer('story', 1200, () => {
+    scene.classList.add('phase-ticket');
+    activeStoryHint = 'A forgotten ticket rises from the glowing window.';
+    setHint(activeStoryHint);
+    playTone({ frequency: 420, duration: 0.55, type: 'triangle', volume: 0.07 });
+  });
+
+  scheduleTimer('story', 3400, () => {
+    scene.classList.add('phase-stamp');
+    activeStoryHint = 'The Night Attendant welcomes the midway’s bravest guest.';
+    setHint(activeStoryHint);
+    setStoryOverlay('The Last Ticket', '“One moonlit ticket—for our bravest guest.”', true);
+    playTone({ frequency: 660, duration: 0.6, type: 'sine', volume: 0.08 });
+  });
+
+  scheduleTimer('story', 6100, () => {
+    scene.classList.add('phase-release');
+    activeStoryHint = 'The ticket dissolves into golden sparks.';
+    setHint(activeStoryHint);
+    playTone({ frequency: 780, duration: 0.7, type: 'sine', volume: 0.055 });
+  });
+
+  scheduleTimer('story', 8200, finishLastTicketStory);
+}
+
+function handleMidwayTap(event) {
   const target = event.currentTarget;
   if (isPaused || storyPlaying) return;
 
-  const storyKey = target.dataset.story;
-  const story = stories[storyKey];
-  if (!story) return;
+  const actual = target.dataset.midwayTarget;
 
-  const expected = story.sequence[story.current];
-  const actual = target.dataset.target;
+  if (lastTicket.complete) {
+    if (actual !== lastTicket.sequence[0]) {
+      showTapFeedback(target, 'incorrect');
+      playTone({ frequency: 130, duration: 0.18, type: 'square', volume: 0.05 });
+      setHint('The stamped ticket points back to the booth lantern.');
+      return;
+    }
 
-  if (expected && actual !== expected) {
-    resetStoryProgress(storyKey);
-    setHint('The signal changes. Try the sequence again.');
-    playTone({ frequency: 120, duration: 0.18, type: 'square', volume: 0.05 });
+    resetLastTicket();
+  }
+
+  const expected = lastTicket.sequence[lastTicket.current];
+  if (actual !== expected) {
+    showTapFeedback(target, 'incorrect');
+    playTone({ frequency: 130, duration: 0.18, type: 'square', volume: 0.05 });
+    setHint('The midway shivers, but your ticket stamps remain. Another clue is waiting.');
+    resetProgressiveHints();
     return;
   }
 
-  triggerSuccessEffect(target);
-  story.current += 1;
+  showTapFeedback(target, 'correct');
+  target.classList.add('step-complete');
+  lastTicket.current += 1;
+  updateProgress();
+  playTone({ frequency: targetTones[actual], duration: 0.24, type: 'triangle', volume: 0.075 });
 
-  if (story.current < story.sequence.length) {
-    const nextHint = story.hints[Math.min(story.current, story.hints.length - 1)];
-    setHint(nextHint);
-    target.classList.add('active');
-    playTone({ frequency: 260 + story.current * 40, duration: 0.22, type: 'triangle', volume: 0.07 });
+  if (lastTicket.current < lastTicket.sequence.length) {
+    setHint(`${lastTicket.current} of 3 ticket stamps glow. The midway is listening.`);
+    resetProgressiveHints();
     return;
   }
 
-  story.done = true;
-  setHint(`${story.title} complete. The grounds answer in a hush.`);
-  showStorySequence(storyKey);
+  startLastTicketStory();
 }
 
-function bindInteractions() {
+function bindMidwayInteractions() {
+  midwayHotspots.forEach((hotspot) => {
+    hotspot.addEventListener('click', handleMidwayTap);
+  });
+}
+
+function prepareMidwayInteractionMap() {
   document.querySelectorAll('.story-target').forEach((element) => {
-    element.addEventListener('click', handleTargetTap);
-    element.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        handleTargetTap({ currentTarget: element });
-      }
-    });
+    element.classList.add('legacy-story-target');
+    element.setAttribute('aria-hidden', 'true');
+    element.tabIndex = -1;
   });
 }
 
 function beginExperience() {
   isStarted = true;
   startScreen.classList.add('hidden');
+  setMidwayHotspotsEnabled(true);
   createAudioContext();
   startAmbientAudio();
-  if (!reduceMotion) {
-    setHint('The grounds are awake. Listen closely for the first clue.');
-  }
+  setHint(getExplorationHint());
+  resetProgressiveHints();
 }
 
 enterButton.addEventListener('click', beginExperience);
@@ -284,9 +412,10 @@ pauseToggle.addEventListener('click', () => {
   setPaused(!isPaused);
 });
 
-createStoryTargetLookup();
-bindInteractions();
-setHint('The dark is listening for a first clue.');
+prepareMidwayInteractionMap();
+bindMidwayInteractions();
+updateProgress();
+setHint('The midway is listening for a first clue.');
 if (reduceMotion) {
-  setHint('Reduced motion mode is active. The story clues will still appear in text.');
+  setHint('Reduced motion is active. Tap feedback will remain visible without animation.');
 }

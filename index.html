@@ -11,6 +11,67 @@
     <main class="app-shell">
       <div class="scene-frame" aria-label="Virtual Hallo'weenie scene">
         <div class="scene" id="scene">
+          <div class="scene-art">
+            <img
+              class="scene-art-layer scene-art-background"
+              src="reference/halloween_pixel_aligned_layers_only/01_background_unlit.png"
+              alt=""
+            />
+            <img
+              class="scene-art-layer scene-art-foreground"
+              src="reference/halloween_pixel_aligned_layers_only/02_foreground_unlit.png"
+              alt=""
+            />
+            <img
+              class="scene-art-layer scene-art-booth"
+              src="reference/halloween_pixel_aligned_layers_only/03_ticket_booth_unlit.png"
+              alt=""
+            />
+            <img
+              class="scene-art-layer scene-art-fog"
+              src="reference/halloween_pixel_aligned_layers_only/04_ground_fog.png"
+              alt=""
+            />
+            <img
+              class="scene-art-layer scene-art-lighting"
+              src="reference/halloween_pixel_aligned_layers_only/05_emitted_lighting.png"
+              alt=""
+            />
+
+            <div class="midway-interaction-map" aria-label="Ticket booth clues">
+              <button
+                class="midway-hotspot hotspot-booth-lantern"
+                type="button"
+                data-midway-target="booth-lantern"
+                aria-label="Ticket booth lantern"
+                disabled
+              ></button>
+              <button
+                class="midway-hotspot hotspot-counter-pumpkin"
+                type="button"
+                data-midway-target="counter-pumpkin"
+                aria-label="Small pumpkin on the ticket counter"
+                disabled
+              ></button>
+              <button
+                class="midway-hotspot hotspot-pumpkin-face"
+                type="button"
+                data-midway-target="pumpkin-face"
+                aria-label="Large pumpkin face above the ticket booth"
+                disabled
+              ></button>
+            </div>
+          </div>
+
+          <div class="last-ticket-effects" aria-hidden="true">
+            <div class="booth-awakening-aura"></div>
+            <img class="moonlit-ticket" src="assets/images/moonlit-ticket.png" alt="" />
+            <div class="ticket-sparkles">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+
           <div class="sky"></div>
           <div class="moon"></div>
           <div class="mist mist-1"></div>
@@ -72,25 +133,33 @@
           <div class="spark spark-3"></div>
 
           <div class="hud" aria-live="polite">
-            <div class="status-badge">Moonlit grounds</div>
+            <div class="status-badge">Moonlit Midway</div>
+            <div class="story-progress" id="storyProgress" role="status" aria-label="The Last Ticket progress: 0 of 3">
+              <span class="progress-label">Ticket stamps</span>
+              <span class="progress-marks" aria-hidden="true">
+                <span class="progress-step" data-progress-step="1"></span>
+                <span class="progress-step" data-progress-step="2"></span>
+                <span class="progress-step" data-progress-step="3"></span>
+              </span>
+            </div>
             <div class="hint" id="hintText">The dark is listening for a first clue.</div>
           </div>
 
           <button class="pause-toggle" id="pauseToggle" aria-label="Pause or resume the scene">Pause</button>
 
           <div class="story-overlay hidden" id="storyOverlay" aria-live="assertive">
-            <p class="story-kicker">haunted whisper</p>
-            <h2 id="storyTitle">Lantern Trail</h2>
-            <p id="storyText">The pumpkins glow brighter, and the path begins to hum.</p>
+            <p class="story-kicker">The Night Attendant</p>
+            <h2 id="storyTitle">The Last Ticket</h2>
+            <p id="storyText">One moonlit ticket—for our bravest guest.</p>
           </div>
         </div>
 
         <div class="start-screen" id="startScreen">
           <div class="start-panel">
             <p class="eyebrow">Virtual Hallo'weenie</p>
-            <h1>Enter the grounds</h1>
+            <h1>Enter the midway</h1>
             <p>
-              A moonlit autumn trail where whispers drift through the pumpkins and the haunted house waits for a curious visitor.
+              Three sleeping attractions are waiting for a curious visitor to wake the park before moonrise.
             </p>
             <button id="enterButton" type="button">Enter</button>
           </div>

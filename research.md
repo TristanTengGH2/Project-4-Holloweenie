@@ -28,6 +28,12 @@ Investigate unfamiliar techniques or asset sources as needed. Verify usage terms
 
 Update decisions when new evidence changes the direction, linking to playtest observations in `plan.md` rather than copying them. Keep chosen behavior and asset requirements in `spec.md`. The Developer confirms when the inquiry is sufficient to continue building; exhaustive research is not a prerequisite.
 
+### AI-generated story asset
+
+- `assets/images/moonlit-ticket.png` was generated on October 19, 2026 with OpenAI's built-in image-generation tool for the payoff of **The Last Ticket**.
+- The aligned Moonlit Midway background was supplied as a style reference only. The output is an original transparent PNG with no brand or legible text.
+- Final prompt: “Create one ornate vintage carnival admission ticket with a crescent-moon punch and warm golden inner glow. Match the supplied scene's detailed whimsical gothic storybook style. Isolate one ticket on a genuinely transparent background, keep it readable at phone size, and include no brands, legible words, characters, hands, or watermark.”
+
 ## Saving the transcript
 
 When directed, save the complete conversation as `transcripts/research-YYYY-MM-DD_HHMMSS.md`, label messages `Developer` and `Agent`, and confirm the path.
