@@ -40,9 +40,13 @@ Investigate unfamiliar techniques or asset sources as needed. Verify usage terms
 
 ## Revisions
 
+October 26 narrative decision: the Developer approved replacing three loosely related payoffs with one visit. The horse emblem on the recovered ticket motivates the carousel; the rider's line motivates searching the wagon; her shared wish motivates restoring the castle. Changed active clues toward cyan to contrast with warm orange artwork, while retaining green ghost magic, warm successes, purple decoys, the six-second discovery delay, and non-color text/spark cues. The final map/card, ticket emblem, and castle-mask effect are original HTML/SVG/CSS; existing generated assets are reused rather than replacing the scene.
+
 Update decisions when new evidence changes the direction, linking to playtest observations in `plan.md` rather than copying them. Keep chosen behavior and asset requirements in `spec.md`. The Developer confirms when the inquiry is sufficient to continue building; exhaustive research is not a prerequisite.
 
 ### AI-generated story asset
+
+The Developer gave discretion to generate another scene and requested a separate reference ZIP. Decision: retain one navigable scene to meet the brief, and generate a dedicated carousel payoff overlay instead. This avoids rebuilding the whole composition or introducing page changes while making the second story visibly distinct. The horse/rider's exact generation prompt and tool provenance are recorded in [reference/carousel_story_asset/README.md](reference/carousel_story_asset/README.md), also included in [reference/carousel-story-asset.zip](reference/carousel-story-asset.zip). The runtime PNG is `assets/images/carousel-rider.png`; no license on third-party stock is inferred.
 
 - `assets/images/moonlit-ticket.png` was generated on October 19, 2026 with OpenAI's built-in image-generation tool for the payoff of **The Last Ticket**.
 - The aligned Moonlit Midway background was supplied as a style reference only. The output is an original transparent PNG with no brand or legible text.

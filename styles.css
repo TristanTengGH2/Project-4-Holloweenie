@@ -109,7 +109,7 @@ button {
   mask-image: radial-gradient(ellipse 5% 6% at 45.5% 51.5%, #000 15%, transparent 100%);
 }
 
-.scene.is-started:not(.has-power) .lantern-beacon {
+.scene.is-started.cue-lantern:not(.has-power) .lantern-beacon {
   opacity: 0.85;
   animation: lanternBeacon 3.4s ease-in-out infinite;
 }
@@ -203,6 +203,196 @@ button {
 .hotspot-horse { left: 24%; top: 47.8%; width: 15%; height: 6%; }
 .hotspot-bell { left: 49%; top: 21%; width: 7%; height: 4%; }
 .hotspot-moon-sign { left: 78.5%; top: 25.6%; width: 7%; height: 4%; }
+.hotspot-carousel-light { left: 32%; top: 37.5%; width: 7%; height: 4.5%; }
+.hotspot-wagon-lantern { left: 93%; top: 43.6%; width: 6%; height: 5%; }
+
+.journey-progress { align-self: flex-start; color: #d8eaff; font-size: 0.65rem; text-shadow: 0 1px 4px #000; }
+
+/* Cyan gives delayed clues contrast against amber scenery, without outline halos. */
+.clue-sparks {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  color: #a6fbff;
+  font-size: 26px;
+  opacity: 0;
+  text-shadow: 0 0 5px #00defa, 0 0 14px #00a8ed;
+  pointer-events: none;
+}
+.hint-shimmer .clue-sparks, .hint-outline .clue-sparks { animation: cyanInvitation 2.8s ease-in-out infinite; }
+.hint-outline .clue-sparks { font-size: 32px; }
+.scene.cue-lantern .lantern-beacon { filter: hue-rotate(155deg) saturate(0.85) brightness(1.5); }
+.scene.cue-carousel-light .carousel-light-heart {
+  background: radial-gradient(circle, #fff, #83f5ff 40%, transparent 75%);
+  box-shadow: 0 0 16px #34dbff;
+}
+.scene.cue-bell .hotspot-bell .object-reaction,
+.scene.cue-horse .hotspot-horse .object-reaction,
+.scene.cue-moon-sign .hotspot-moon-sign .object-reaction {
+  fill: #9cf5ff;
+  stroke: #e3fdff;
+  filter: drop-shadow(0 0 7px #00d5ff);
+}
+.scene.cue-pumpkin .pumpkin-spirit-light { fill: #a0f7ff; filter: drop-shadow(0 0 10px #23dafa); }
+.scene.cue-moon-sign .hotspot-moon-sign .object-reaction { animation: bellInvitation 3s ease-in-out infinite; }
+
+.wagon-lantern-heart {
+  position: absolute;
+  left: 93%;
+  top: 43.6%;
+  width: 4%;
+  height: 4%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, #fff8b6, #ffac4f 35%, transparent 75%);
+  opacity: 0;
+}
+.scene.fortune-lantern-lit .wagon-lantern-heart { opacity: 1; }
+.scene.cue-wagon-lantern .wagon-lantern-heart {
+  background: radial-gradient(ellipse, #fff, #83f5ff 35%, transparent 75%);
+  animation: crystalInvitation 2.6s ease-in-out infinite;
+}
+.scene.story-fortune .crystal-heart { opacity: 1; animation: crystalInvitation 2.6s ease-in-out infinite; }
+
+.ticket-horse-seal { overflow: visible; pointer-events: none; }
+.castle-memory-light {
+  opacity: 0;
+  -webkit-mask-image: radial-gradient(ellipse 9% 7% at 75% 12%, #000 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 9% 7% at 75% 12%, #000 35%, transparent 100%);
+  filter: brightness(2) drop-shadow(0 0 10px #ffdba2);
+}
+.scene.park-restored .castle-memory-light { opacity: 1; }
+.scene.park-restored .scene-art-lighting { filter: brightness(1.15); }
+.wish-star {
+  position: absolute;
+  left: 87.8%;
+  top: 47.6%;
+  font-size: 52px;
+  color: #fff2bc;
+  text-shadow: 0 0 18px #ffd376, 0 0 30px #9bf2ff;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+.scene.wish-travelling .wish-star { animation: wishFlight 2.1s ease-in-out forwards; }
+.wish-card {
+  position: absolute;
+  left: 50%;
+  top: 32%;
+  width: 72%;
+  padding: 20px;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  background: #241c3ef5;
+  border: 2px solid #a6f5ef;
+  box-shadow: 0 0 30px #65ecba88;
+  color: #fff0cd;
+  text-align: center;
+  opacity: 0;
+}
+.wish-card span { display: block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
+.wish-card strong { display: block; font-size: clamp(1rem, 5vw, 1.6rem); line-height: 1.3; }
+.wish-card svg { width: 100%; height: 50px; margin-top: 10px; fill: #fff0ba; stroke: #a6f5ef; stroke-width: 2; }
+.wish-card svg > path:first-child { fill: none; stroke-dasharray: 5 5; }
+.scene.wish-revealed:not(.wish-travelling) .wish-card { opacity: 1; }
+
+@keyframes cyanInvitation {
+  0%, 100% { opacity: 0.55; transform: translate(-50%, 0) scale(0.85); }
+  50% { opacity: 1; transform: translate(-50%, -8px) scale(1.15); }
+}
+@keyframes wishFlight {
+  0% { opacity: 0; left: 87.8%; top: 47.6%; }
+  20% { opacity: 1; }
+  85% { opacity: 1; left: 75%; top: 12%; }
+  100% { opacity: 0; left: 75%; top: 12%; }
+}
+
+.attraction-label {
+  align-self: flex-start;
+  max-width: calc(100% - 75px);
+  color: #ffe5ab;
+  font-size: 0.76rem;
+  text-shadow: 0 1px 5px #000;
+}
+
+/* Carousel effects share the artwork's coordinate system and pause clock. */
+.carousel-bulbs {
+  opacity: 0;
+  -webkit-mask-image: radial-gradient(ellipse 26% 8% at 20% 38%, #000 45%, transparent 100%);
+  mask-image: radial-gradient(ellipse 26% 8% at 20% 38%, #000 45%, transparent 100%);
+}
+.scene.carousel-lit .carousel-bulbs { opacity: 0.8; }
+.scene.story-carousel .carousel-bulbs { animation: carouselChase 2s ease-in-out infinite; }
+.carousel-light-heart {
+  position: absolute;
+  left: 32%;
+  top: 37.5%;
+  width: 3%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, #fff9df, #ffb23f 35%, transparent 75%);
+  box-shadow: 0 0 14px #ffba55;
+  border-radius: 50%;
+  opacity: 0;
+}
+.scene.cue-carousel-light .carousel-light-heart { animation: crystalInvitation 2.5s ease-in-out infinite; }
+.scene.carousel-lit .carousel-light-heart { opacity: 0.9; }
+.scene.cue-bell .hotspot-bell .object-reaction { animation: bellInvitation 3s ease-in-out infinite; }
+.scene.cue-horse .hotspot-horse .object-reaction { animation: horseInvitation 3s ease-in-out infinite; }
+
+.carousel-ride {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.carousel-rider {
+  position: absolute;
+  left: 20%;
+  top: 47%;
+  width: 58%;
+  height: auto;
+  transform: translate(-50%, -50%) scale(0.25);
+  filter: drop-shadow(0 0 12px #d5afff);
+  opacity: 0;
+}
+.scene.carousel-gallop .carousel-ride { opacity: 1; }
+.scene.carousel-gallop .carousel-rider { animation: carouselRide 5s ease-in-out forwards; }
+.scene.carousel-depart .carousel-rider { animation: carouselFarewell 1.8s ease-in forwards; }
+.carousel-leaves {
+  position: absolute;
+  left: 40%;
+  top: 42%;
+  color: #ffc073;
+  font-size: 3rem;
+  letter-spacing: 12px;
+  text-shadow: 0 0 12px #bf8bff;
+  opacity: 0;
+}
+.scene.carousel-depart .carousel-leaves { animation: carouselLeaves 1.8s ease-out forwards; }
+
+@keyframes carouselChase {
+  0%, 100% { opacity: 0.45; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.5); }
+}
+@keyframes bellInvitation {
+  0%, 100% { opacity: 0.1; transform: rotate(-5deg); }
+  50% { opacity: 0.65; transform: rotate(5deg); }
+}
+@keyframes horseInvitation { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.6; } }
+@keyframes carouselRide {
+  0% { opacity: 0; left: 20%; top: 47%; transform: translate(-50%, -50%) scale(0.25); }
+  20% { opacity: 1; left: 32%; top: 40%; transform: translate(-50%, -50%) scale(0.8) rotate(-5deg); }
+  50% { opacity: 1; left: 48%; top: 35%; transform: translate(-50%, -50%) scale(1) rotate(3deg); }
+  75% { opacity: 1; left: 55%; top: 37%; transform: translate(-50%, -50%) scale(1) rotate(-3deg); }
+  100% { opacity: 1; left: 55%; top: 36%; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes carouselFarewell {
+  0% { opacity: 1; left: 55%; top: 36%; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; left: 24%; top: 47%; transform: translate(-50%, -50%) scale(0.2); }
+}
+@keyframes carouselLeaves {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translate(40px, -65px) scale(1.3) rotate(30deg); }
+}
 
 .legacy-story-target { pointer-events: none !important; }
 
@@ -229,7 +419,7 @@ button {
   opacity: 0;
 }
 
-.scene.has-power:not(.crystal-used) .crystal-heart {
+.scene.has-power.cue-crystal:not(.crystal-used) .crystal-heart {
   animation: crystalInvitation 2.6s ease-in-out infinite;
 }
 .scene.crystal-used .crystal-heart { opacity: 0.65; }
@@ -260,6 +450,8 @@ button {
 }
 .scene.spirit-arrived .pumpkin-spirit-light {
   opacity: 0.95;
+}
+.scene.spirit-arrived.cue-pumpkin .pumpkin-spirit-light {
   animation: pumpkinSpirit 2.8s ease-in-out infinite;
 }
 
@@ -433,6 +625,10 @@ button {
   filter: brightness(0.72) saturate(0.88);
   transition: filter 700ms ease;
 }
+
+/* Let the story caption replace the exploration text without crowding the phone. */
+.scene.story-playing .hud .hint { opacity: 0; }
+.scene.story-playing .hud .replay-button { visibility: hidden; }
 
 .scene.story-last-ticket.phase-awake .booth-awakening-aura {
   opacity: 1;
@@ -1190,7 +1386,25 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scene.has-power:not(.crystal-used) .crystal-heart { animation: none; opacity: 0.9; }
+  .hint-shimmer .clue-sparks, .hint-outline .clue-sparks { animation: none; opacity: 1; transform: translateX(-50%); }
+  .scene.cue-moon-sign .hotspot-moon-sign .object-reaction { animation: none; opacity: 0.75; }
+  .scene.cue-wagon-lantern .wagon-lantern-heart, .scene.story-fortune .crystal-heart { animation: none; opacity: 1; }
+  .scene.wish-travelling .wish-star { animation: none; left: 75%; top: 12%; opacity: 1; }
+  .scene.park-restored .wish-star { opacity: 0; }
+  .scene.cue-bell .hotspot-bell .object-reaction,
+  .scene.cue-horse .hotspot-horse .object-reaction { animation: none; opacity: 0.65; }
+  .scene.cue-carousel-light .carousel-light-heart { animation: none; opacity: 0.9; }
+  .scene.story-carousel .carousel-bulbs { animation: none; opacity: 1; }
+  .scene.carousel-gallop .carousel-rider {
+    animation: none;
+    opacity: 1;
+    left: 50%;
+    top: 36%;
+    transform: translate(-50%, -50%);
+  }
+  .scene.carousel-depart .carousel-rider { opacity: 0; }
+  .scene.carousel-depart .carousel-leaves { animation: none; opacity: 0.8; }
+  .scene.has-power.cue-crystal:not(.crystal-used) .crystal-heart { animation: none; opacity: 0.9; }
   .scene.crystal-releasing .crystal-heart { animation: none; opacity: 1; }
   .scene.crystal-releasing .midway-ghost {
     animation: none;
@@ -1200,13 +1414,14 @@ button {
     transform: translate(-50%, -50%);
   }
   .scene.crystal-releasing.spirit-arrived .midway-ghost { opacity: 0; }
-  .scene.spirit-arrived .pumpkin-spirit-light { animation: none; opacity: 0.95; }
+  .scene.spirit-arrived .pumpkin-spirit-light,
+  .scene.spirit-arrived.cue-pumpkin .pumpkin-spirit-light { animation: none; opacity: 0.95; }
   .scene.pumpkin-awake .pumpkin-spirit-light,
   .scene.pumpkin-awake .booth-window-light { animation: none; opacity: 0.95; }
   .scene.has-power:not(.story-playing):not(.crystal-releasing) .object-reaction { animation: none; opacity: 0.22; }
   .scene .midway-hotspot.decoy-active .object-reaction { animation: none; opacity: 0.9; }
   .midway-hotspot.decoy-active::after { animation: none; opacity: 1; }
-  .scene.is-started:not(.has-power) .lantern-beacon {
+  .scene.is-started.cue-lantern:not(.has-power) .lantern-beacon {
     animation: none !important;
     opacity: 0.85;
   }

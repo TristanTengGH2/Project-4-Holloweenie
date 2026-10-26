@@ -24,9 +24,29 @@ Main risk: the visual targets are embedded in a detailed image, so hotspots and 
 - [ ] **Connect The Last Ticket trigger and story.** Implemented the approved object order, preserved progress after incorrect taps, and added an 8.2-second locked audiovisual ticket sequence with completion dialogue and replay. Developer verification of touch, pause/resume, replay, and reduced-motion behavior remains.
 - [ ] **Developer review.** Test the complete sequence directly at phone size and approve its discoverability, timing, and return to exploration.
 
-Do not begin the carousel or fortune-wagon triggers until the shared interaction pattern has passed Developer review.
+The Developer accepted the booth's functional interaction and authorized carousel development on October 26. The fortune-wagon story remains outside the current implementation checkpoint.
 
 ## Evidence and revisions
+
+### Cohesive three-story journey — October 26, 2026
+
+Publication checkpoint: the Developer approved the local preview and authorized publishing the three-story version on October 26. The scene, generated carousel rider, separate reference ZIP, updated narrative, and six-second cyan hints are included in this deployment. New iPhone/peer verification remains pending.
+
+The Developer approved connecting the ticket and horse through one forgotten guest: an unused horse-stamped ticket leads to her last ride; her dialogue points toward a missing wish; the wagon reveals her wish that the park shine again for everyone. Updated the introduction and speaker labels, added an original SVG horse emblem over the ticket reveal, implemented the moon → wagon lantern → crystal-ball finale, and added a separate three-memory completion counter. The finale restores castle illumination and ends with the park welcoming future guests. The same scene, ordered progress, delayed cues, Pause, input lock, and independent replay rules are reused. New cues use cyan object illumination and sparks against amber scenery; no haptics were added, per the Developer's preference.
+
+Normal and reduced-motion Chrome sessions passed the complete three-story visit using real touch dispatch: six-second cyan clue delay, ticket seal and narrative line, guest's wish dialogue and speaker, correct wagon order, harmless wrong taps, locked input/navigation during the finale, paused story timers, castle activation, all three memory completions, finale replay preserving the first two memories, and full reset to a dark booth. Eight targets met 44 × 44 CSS pixels and stayed on screen at 390 × 844 and 320 × 700. Reviewed screenshots of the cue, ticket, wish reveal, and castle finale. The third story lasts 8.7 seconds; first and second remain 8.2 seconds. No new physical-phone or peer test is claimed. Changes remain local pending publication.
+
+Remaining delivery checks: Developer review of narrative/clue visibility on iPhone, peer testing when available, final sourced audio, visible ambient effects against the complete brief, credits verification, and debrief. Three implemented story sequences do not by themselves establish full assignment completion.
+
+### Developer test and second-story checkpoint — October 26, 2026
+
+The Developer reported testing the other behavior on an iPhone and having no friend available for a peer playtest. Record this as self-reported developer testing only: phone model, browser version, and individual test results were not supplied. No peer-test evidence is claimed, and testing can be arranged with a classmate later.
+
+Implemented The Riderless Carousel using the approved bell → carousel light → horse sequence. It reuses the current progress, hint timers, input lock, Pause, and replay infrastructure through an active-attraction state. The booth story unlocks the carousel through an explicit same-scene button. The carousel can replay independently or return to the dark booth opening. The fortune-wagon story remains pending.
+
+Generated one transparent horse-and-rider PNG using OpenAI's built-in image-generation tool with the existing carnival as a style reference. Kept the single scene required by the brief. Runtime asset: `assets/images/carousel-rider.png`. Requested reference package: `reference/carousel-story-asset.zip`, containing the PNG and its final prompt/provenance README. `unzip -t` passed for both files.
+
+Verification: fresh Chrome sessions passed the full ticket → carousel flow in normal and reduced-motion modes using dispatched touch events. Checks included the six-second bell cue, ordered bell/light/horse progress, progress preservation on incorrect taps, generated rider and dialogue visibility, disabled navigation/targets during playback, frozen story timers and rider position while paused, completion, independent carousel replay, and return to the dark booth. All seven targets met the 44-pixel minimum and stayed visible at 390 × 844 and 320 × 700. Reviewed carousel and pause screenshots; suppressed exploration text/navigation during story playback to avoid overlapping the dialogue on phones. These are browser checks, not physical-iPhone or peer verification of the new story. Local implementation is not yet published.
 
 ### Deployment and development record
 
@@ -58,6 +78,8 @@ Do not begin the carousel or fortune-wagon triggers until the shared interaction
 Originally deferred: tighter halos and the unclear counter-pumpkin clue. These were revisited in the interaction revision below. Remaining: carousel and fortune-wagon stories, final castle response, final audio, full credits verification, and debrief. No peer playtesting or physical-phone pass has yet been documented.
 
 ### Interaction revision — October 26, 2026
+
+Hint pacing refinement: the Developer requested a short exploration window before each visual trigger clue. Added stage-specific cue classes after six seconds of inactivity: lantern flicker after entry, crystal pulse after the first tap, and pumpkin pulse after the ghost reaction unlocks interaction. Correct-tap reactions remain immediate and early taps still work. Pause preserves the cue countdown. Text escalation remains at 12 and 20 seconds.
 
 Final pumpkin reaction: the last correct tap changes the green face to orange-gold, flares gently for 1.2 seconds, illuminates the booth window, and launches the existing ticket sequence. Its warm face/window state persists after completion and resets on Replay. Reviewed a phone-sized screenshot of the awakening.
 

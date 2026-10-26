@@ -1,6 +1,6 @@
 # Moonlit Midway — Virtual Hallo'weenie
 
-A browser-based Halloween theme-park prototype for smartphone exploration, developed for Project 4. Intended for ages 10 and older.
+A browser-based Halloween theme-park prototype for smartphone exploration, developed for Project 4. Intended for ages 10 and older. Restore the memories of the park's forgotten final guest: her unused ticket, her last carousel ride, and her wish to make the midway shine for everyone again.
 
 ## Play and review
 
@@ -28,7 +28,9 @@ The scene opens with its lighting overlay off and a flickering booth lantern as 
 
 After power is restored, the green crystal ball pulses. Its correct tap releases a large friendly ghost that flies into the pumpkin, whose eyes and grin turn green for the final tap. Tapping the pumpkin turns its face orange-gold, lights the booth window, and launches the ticket story. The horse, bell, and moon sign intermittently glint and play harmless visual reactions when tapped. Hints sit near the bottom of the scene so the attractions stay visible. See `plan.md` for browser verification results and remaining physical-phone checks.
 
-The first attraction, The Last Ticket, has an ordered three-tap trigger, audiovisual feedback, progress indicators, timed hints, and an approximately 8.2-second ticket animation. Tap the booth lantern, green crystal ball in the wagon on the right, and large pumpkin face. The carousel horse, hanging bell, and crescent-moon sign give decoy feedback without affecting progress. Pause greys out the scene and exposes Resume. Pause/resume and replay have passed an emulated-touch browser test but still need a recorded physical-phone test. The carousel and fortune-wagon stories are approved concepts, not implemented attractions.
+All three stories are implemented. The Last Ticket uses the booth lantern → green crystal ball → pumpkin face and reveals a horse-stamped ticket. Choose **Explore the carousel**, then tap bell → carousel roof light → white horse for the guest's last ride. Choose **Follow her wish**, then tap crescent-moon sign → wagon-entrance lantern → crystal ball to restore the castle. The sequences last 8.2, 8.2, and 8.7 seconds respectively. Bell/horse/moon targets act as decoys outside their real story sequences. Pause greys out the scene and exposes Resume; each story can replay, and returning to the booth resets the visit. Cyan cues start after six seconds; stronger text hints follow at 12 and 20 seconds. Memories restored counts completed stories separately from the current three-step trigger.
+
+The full journey has passed normal and reduced-motion browser checks with emulated touch. The Developer approved the local preview and authorized publication on October 26, 2026. The Developer reports testing earlier behavior on an iPhone; the new story connection and finale still need physical-phone review. No peer playtest is recorded.
 
 This is a work-in-progress submission, not a claim that all brief requirements have passed. In particular, physical-phone verification, peer playtesting, final audio sourcing, visible ambient effects, and final credits verification remain open.
 
