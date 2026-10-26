@@ -37,29 +37,52 @@
               src="reference/halloween_pixel_aligned_layers_only/05_emitted_lighting.png"
               alt=""
             />
+            <img
+              class="scene-art-layer lantern-beacon"
+              src="reference/halloween_pixel_aligned_layers_only/05_emitted_lighting.png"
+              alt=""
+            />
 
-            <div class="midway-interaction-map" aria-label="Ticket booth clues">
+            <div class="scene-reactions" aria-hidden="true">
+              <div class="booth-window-light"></div>
+              <div class="crystal-heart"></div>
+              <svg class="midway-ghost" viewBox="0 0 160 190">
+                <defs><radialGradient id="ghost-body"><stop stop-color="#f0ffe5"/><stop offset="0.65" stop-color="#a7ffbd"/><stop offset="1" stop-color="#46ddac" stop-opacity="0.85"/></radialGradient></defs>
+                <path fill="url(#ghost-body)" d="M30 86 C19 12 131 0 133 81 Q136 105 153 116 Q130 130 116 119 L127 173 Q109 155 96 176 Q80 153 65 181 Q48 156 27 173 L39 121 Q19 134 5 117 Q28 105 30 86 Z"/>
+                <ellipse fill="#164843" cx="61" cy="74" rx="9" ry="14"/>
+                <ellipse fill="#164843" cx="101" cy="74" rx="9" ry="14"/>
+                <path d="M62 105 Q81 129 101 103" fill="none" stroke="#164843" stroke-width="7" stroke-linecap="round"/>
+              </svg>
+              <svg class="pumpkin-spirit-light" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M20 42 Q29 23 38 42 Z M62 42 Q73 23 82 42 Z M45 55 L50 44 L56 55 Z M20 60 Q49 78 82 60 Q69 92 49 88 Q30 88 20 60 Z"/>
+              </svg>
+            </div>
+
+            <div class="midway-interaction-map" role="group" aria-label="Explore the midway">
               <button
                 class="midway-hotspot hotspot-booth-lantern"
                 type="button"
                 data-midway-target="booth-lantern"
                 aria-label="Ticket booth lantern"
                 disabled
-              ></button>
+              ><svg class="object-outline" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M43 8 Q50 0 57 8 L57 20 L76 32 L68 76 L56 85 L56 94 L44 94 L44 85 L32 76 L24 32 L43 20 Z M24 32 L76 32 M32 76 L68 76" /></svg></button>
               <button
-                class="midway-hotspot hotspot-counter-pumpkin"
+                class="midway-hotspot hotspot-crystal-ball"
                 type="button"
-                data-midway-target="counter-pumpkin"
-                aria-label="Small pumpkin on the ticket counter"
+                data-midway-target="crystal-ball"
+                aria-label="Green crystal ball in the wagon on the right"
                 disabled
-              ></button>
+              ><svg class="object-outline" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 14 A32 32 0 1 1 49.9 14 M34 76 L28 90 L72 90 L66 76" /></svg></button>
               <button
                 class="midway-hotspot hotspot-pumpkin-face"
                 type="button"
                 data-midway-target="pumpkin-face"
                 aria-label="Large pumpkin face above the ticket booth"
                 disabled
-              ></button>
+              ><svg class="object-outline" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M4 55 Q6 14 33 12 Q42 5 50 12 Q67 4 78 20 Q97 31 96 57 Q92 94 52 95 Q13 97 4 55 Z M20 42 Q29 23 38 42 Z M62 42 Q73 23 82 42 Z M45 55 L50 44 L56 55 Z M20 60 Q49 78 82 60 Q69 92 49 88 Q30 88 20 60 Z" /></svg></button>
+              <button class="midway-hotspot hotspot-horse" type="button" data-midway-target="horse" aria-label="White carousel horse" disabled><svg class="object-outline" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M8 53 Q16 44 37 49 L51 46 Q57 30 66 20 L73 9 L75 19 L83 16 L85 26 L94 37 Q100 43 94 48 L84 43 L78 35 Q75 45 72 54 L81 60 L86 80 L80 88 L73 85 L72 68 L63 65 L51 72 L42 76 L38 93 L30 93 L29 83 L34 67 Q18 71 12 61 L4 65 L5 56 Z" /></svg></button>
+              <button class="midway-hotspot hotspot-bell" type="button" data-midway-target="bell" aria-label="Hanging brass bell" disabled><svg class="object-outline" viewBox="0 0 100 100" aria-hidden="true"><path d="M45 14 Q50 4 55 14 L55 30 Q71 34 72 58 L83 75 Q50 89 17 75 L28 58 Q29 34 45 30 Z M43 82 Q50 99 57 82" /></svg></button>
+              <button class="midway-hotspot hotspot-moon-sign" type="button" data-midway-target="moon-sign" aria-label="Hanging crescent moon above the wagon" disabled><svg class="object-outline" viewBox="0 0 100 100" aria-hidden="true"><path d="M66 13 C7 3 7 93 66 86 C28 70 34 29 66 13 Z" /></svg></button>
             </div>
           </div>
 
@@ -143,9 +166,13 @@
               </span>
             </div>
             <div class="hint" id="hintText">The dark is listening for a first clue.</div>
+            <button class="replay-button" id="replayButton" type="button" hidden>Replay · lights out</button>
           </div>
 
-          <button class="pause-toggle" id="pauseToggle" aria-label="Pause or resume the scene">Pause</button>
+          <button class="pause-toggle" id="pauseToggle" aria-label="Pause the scene" aria-pressed="false">Pause</button>
+          <div class="pause-screen" id="pauseScreen" role="status" hidden>
+            <div><h2>Paused</h2><p>Take a breath. Tap Resume to return to the midway.</p></div>
+          </div>
 
           <div class="story-overlay hidden" id="storyOverlay" aria-live="assertive">
             <p class="story-kicker">The Night Attendant</p>

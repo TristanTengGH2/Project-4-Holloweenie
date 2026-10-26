@@ -26,6 +26,8 @@ The Developer supplied separate fog and lighting images to support effects. Init
 
 The Developer approved the three-story storyboard and requested emphasis at each interaction step. After testing the first trigger, the Developer reported that the halos could fit objects better and the counter-pumpkin clue was unclear. The Developer explicitly deferred those refinements in favor of a functioning prototype. See [plan.md](plan.md) for verification limits and next priorities.
 
+On October 26 the Developer revisited these refinements: both the counter pumpkin and a proposed awning bulb were hard to see, whereas the green crystal ball on the right caught their eye. The approved trigger now crosses from the booth to the wagon and returns to the pumpkin face. Shaped SVG strokes retain broad accessible tap regions while highlighting closer to each object. Harmless decoys support exploration without resetting progress. Revised hints name visible features and progressively narrow the location; the strongest hint explicitly identifies the object for users still stuck after 20 seconds.
+
 The scene-generation record is incomplete. [CREDITS.md](CREDITS.md) records every current image, available attribution, and unresolved provenance instead of assuming an external license. Sound is currently synthesized; sourced CC0/public-domain recordings remain a brief requirement.
 
 Record only what informs the next build decisions:

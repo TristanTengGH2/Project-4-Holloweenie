@@ -46,18 +46,25 @@ button {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 18px;
+  padding: 12px;
+  min-width: 0;
 }
 
 .scene-frame {
   position: relative;
-  width: min(420px, calc(100vw - 20px));
-  height: min(860px, calc(100vh - 24px));
+  width: min(420px, calc(100vw - 24px), calc((100vh - 24px) * 941 / 1672));
+  height: auto;
+  aspect-ratio: 941 / 1672;
   border-radius: 32px;
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: linear-gradient(180deg, #09121d 0%, #0e1b2f 30%, #122033 75%, #0b1018 100%);
+}
+
+@supports (height: 100dvh) {
+  body, .app-shell { min-height: 100dvh; }
+  .scene-frame { width: min(420px, calc(100vw - 24px), calc((100dvh - 24px) * 941 / 1672)); }
 }
 
 .scene {
@@ -91,7 +98,34 @@ button {
 .scene-art-foreground { z-index: 1; }
 .scene-art-booth { z-index: 2; }
 .scene-art-fog { z-index: 3; }
-.scene-art-lighting { z-index: 4; }
+.scene-art-lighting { z-index: 4; opacity: 0; }
+.scene.has-power .scene-art-lighting { opacity: 1; }
+
+/* Isolate the existing lantern illumination without changing the aligned PNG. */
+.lantern-beacon {
+  z-index: 5;
+  opacity: 0;
+  -webkit-mask-image: radial-gradient(ellipse 5% 6% at 45.5% 51.5%, #000 15%, transparent 100%);
+  mask-image: radial-gradient(ellipse 5% 6% at 45.5% 51.5%, #000 15%, transparent 100%);
+}
+
+.scene.is-started:not(.has-power) .lantern-beacon {
+  opacity: 0.85;
+  animation: lanternBeacon 3.4s ease-in-out infinite;
+}
+
+.replay-button {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #f0c885;
+  border-radius: 999px;
+  background: #241d30;
+  color: #ffe7b6;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.replay-button[hidden] { display: none; }
 
 .midway-interaction-map {
   position: absolute;
@@ -100,103 +134,245 @@ button {
   pointer-events: none;
 }
 
+/* Buttons retain generous tap areas; SVG strokes follow the visible object. */
 .midway-hotspot {
   position: absolute;
   min-width: 44px;
   min-height: 44px;
   padding: 0;
-  border: 2px solid transparent;
-  border-radius: 50%;
+  border: 0;
   background: transparent;
-  color: transparent;
+  color: #ffdf96;
   pointer-events: auto;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  transform: translate(-50%, -50%);
 }
 
-.midway-hotspot:disabled {
-  pointer-events: none;
-}
+.midway-hotspot:disabled { pointer-events: none; }
 
-.midway-hotspot:not(:disabled):hover,
-.midway-hotspot:not(:disabled):focus-visible {
-  border-color: rgba(255, 222, 143, 0.9);
-  background: rgba(255, 190, 91, 0.12);
-  box-shadow: 0 0 0 4px rgba(78, 45, 105, 0.52), 0 0 24px rgba(255, 177, 74, 0.72);
-  outline: none;
-}
-
-.midway-hotspot.step-complete {
-  border-color: rgba(255, 218, 126, 0.48);
-  background: rgba(255, 184, 70, 0.08);
-}
-
-.midway-hotspot.tap-correct {
-  border-color: #ffe4a0;
-  background: rgba(255, 183, 68, 0.2);
-  animation: hotspotCorrect 650ms ease-out;
-}
-
-.midway-hotspot.tap-incorrect {
-  border-color: #d8a8ff;
-  border-style: dashed;
-  background: rgba(139, 78, 185, 0.22);
-  animation: hotspotIncorrect 480ms ease-out;
-}
-
-.midway-hotspot.tap-correct::after,
-.midway-hotspot.tap-incorrect::after {
-  content: "";
+.object-outline {
   position: absolute;
-  inset: 50%;
-  border: 2px solid currentColor;
-  border-radius: inherit;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: transparent;
+  stroke: currentColor;
+  /* Keep the stroke readable in CSS pixels as the SVG scales to a phone. */
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
   opacity: 0;
   pointer-events: none;
-  animation: tapRipple 600ms ease-out;
+  filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 9px currentColor);
 }
 
-.midway-hotspot.tap-correct::after { color: #ffd36f; }
-.midway-hotspot.tap-incorrect::after { color: #c48aee; }
+.object-outline path { vector-effect: non-scaling-stroke; }
 
-.hotspot-booth-lantern {
-  left: 40.3%;
-  top: 48.1%;
-  width: 10.5%;
-  height: 7.8%;
+.midway-hotspot:focus-visible {
+  outline: 2px dashed #fff4d5;
+  outline-offset: 5px;
+  border-radius: 8px;
 }
 
-.hotspot-counter-pumpkin {
-  left: 39.2%;
-  top: 53.5%;
-  width: 10.5%;
-  height: 6.8%;
+.midway-hotspot:focus-visible .object-outline,
+.midway-hotspot.tap-correct .object-outline,
+.midway-hotspot.tap-incorrect .object-outline,
+.midway-hotspot.hint-outline .object-outline { opacity: 1; }
+
+@media (hover: hover) {
+  .midway-hotspot:hover .object-outline { opacity: 0.8; }
 }
 
-.hotspot-pumpkin-face {
-  left: 38.5%;
-  top: 39.2%;
-  width: 23%;
-  height: 10.5%;
-}
-
-.legacy-story-target {
-  pointer-events: none !important;
-}
-
-.midway-hotspot.hint-shimmer {
-  border-color: rgba(255, 226, 158, 0.34);
-  box-shadow: 0 0 18px rgba(255, 182, 76, 0.48);
+.midway-hotspot.step-complete .object-outline { opacity: 0.5; }
+.midway-hotspot.tap-correct .object-outline { opacity: 1; stroke-width: 3; }
+.midway-hotspot.tap-incorrect { color: #dbacff; }
+.midway-hotspot.tap-incorrect .object-outline { stroke-dasharray: 5 3; }
+.midway-hotspot.hint-shimmer .object-outline {
+  opacity: 0.65;
   animation: clueShimmer 1.8s ease-in-out infinite alternate;
 }
+.midway-hotspot.hint-outline .object-outline { stroke-width: 3; }
 
-.midway-hotspot.hint-outline {
-  border-color: rgba(255, 231, 172, 0.82);
-  border-style: dashed;
-  background: rgba(255, 185, 76, 0.1);
-  box-shadow: 0 0 0 3px rgba(67, 39, 91, 0.55), 0 0 24px rgba(255, 183, 74, 0.62);
+/* Centers and dimensions are percentages of the shared 941 × 1672 artwork. */
+.hotspot-booth-lantern { left: 45.5%; top: 51.5%; width: 8%; height: 5.5%; }
+.hotspot-crystal-ball { left: 87.8%; top: 47.6%; width: 8.5%; height: 5.2%; }
+.hotspot-pumpkin-face { left: 50.3%; top: 44.5%; width: 24%; height: 6.4%; }
+.hotspot-horse { left: 24%; top: 47.8%; width: 15%; height: 6%; }
+.hotspot-bell { left: 49%; top: 21%; width: 7%; height: 4%; }
+.hotspot-moon-sign { left: 78.5%; top: 25.6%; width: 7%; height: 4%; }
+
+.legacy-story-target { pointer-events: none !important; }
+
+/* Discovery now comes from the objects themselves; keep keyboard focus visible. */
+.midway-hotspot:not(:focus-visible) .object-outline { opacity: 0; animation: none; }
+
+.scene-reactions {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.crystal-heart {
+  position: absolute;
+  left: 87.8%;
+  top: 47.6%;
+  width: 5.5%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #f4ffe8, #b7ffd8 18%, #23e69c 46%, transparent 72%);
+  box-shadow: 0 0 12px #70ffb4, 0 0 24px #23da97;
+  opacity: 0;
+}
+
+.scene.has-power:not(.crystal-used) .crystal-heart {
+  animation: crystalInvitation 2.6s ease-in-out infinite;
+}
+.scene.crystal-used .crystal-heart { opacity: 0.65; }
+.scene.crystal-releasing .crystal-heart { animation: crystalBurst 1.2s ease-out forwards; }
+
+.midway-ghost {
+  position: absolute;
+  left: 87.8%;
+  top: 47.6%;
+  width: 29%;
+  height: auto;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.1);
+  filter: drop-shadow(0 0 12px #57ffb6) drop-shadow(0 0 20px #19c686);
+}
+.scene.crystal-releasing .midway-ghost { animation: ghostVisit 3.7s ease-in-out forwards; }
+
+.pumpkin-spirit-light {
+  position: absolute;
+  left: 50.3%;
+  top: 44.5%;
+  width: 24%;
+  height: 6.4%;
+  transform: translate(-50%, -50%);
+  fill: #adffd0;
+  filter: drop-shadow(0 0 5px #63ffac) drop-shadow(0 0 13px #13ef8c);
+  opacity: 0;
+}
+.scene.spirit-arrived .pumpkin-spirit-light {
+  opacity: 0.95;
+  animation: pumpkinSpirit 2.8s ease-in-out infinite;
+}
+
+.scene.pumpkin-awake .pumpkin-spirit-light {
+  fill: #fff1a8;
+  opacity: 1;
+  filter: drop-shadow(0 0 6px #ffba4e) drop-shadow(0 0 18px #ff781c);
+  animation: pumpkinAwakening 1.2s ease-out forwards;
+}
+
+.booth-window-light {
+  position: absolute;
+  left: 50%;
+  top: 53.5%;
+  width: 20%;
+  height: 8%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, #fff5be 0%, #ffb940 28%, #ff8a2455 55%, transparent 75%);
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+.scene.pumpkin-awake .booth-window-light {
+  opacity: 0.9;
+  animation: boothWindowWake 1.2s ease-out forwards;
+}
+
+@keyframes pumpkinAwakening {
+  0% { opacity: 0.65; filter: drop-shadow(0 0 3px #ffba4e); }
+  45% { opacity: 1; filter: drop-shadow(0 0 12px #ffd282) drop-shadow(0 0 28px #ff781c); }
+  100% { opacity: 0.95; filter: drop-shadow(0 0 6px #ffba4e) drop-shadow(0 0 18px #ff781c); }
+}
+@keyframes boothWindowWake {
+  0% { opacity: 0; }
+  65% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+
+/* Lit silhouettes overlay the baked-in artwork so the decoys appear to wake. */
+.object-reaction {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: #e2c5ff;
+  stroke: #f9eeff;
+  stroke-width: 1;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px #ba79ff);
+}
+:where(.scene.has-power:not(.story-playing):not(.crystal-releasing)) .object-reaction {
+  animation: decoyGlimmer 6s ease-in-out infinite;
+}
+.scene.has-power .hotspot-bell .object-reaction { animation-delay: 1.6s; fill: #ffd38a; }
+.scene.has-power .hotspot-moon-sign .object-reaction { animation-delay: 3.2s; }
+
+.midway-hotspot.decoy-active .object-reaction { opacity: 0.9; }
+.scene .hotspot-horse.decoy-active .object-reaction { animation: horsePrance 2.4s ease-in-out forwards; }
+.scene .hotspot-bell.decoy-active .object-reaction { animation: bellPeal 2.4s ease-out forwards; transform-origin: 50% 10%; }
+.scene .hotspot-moon-sign.decoy-active .object-reaction { animation: moonSpell 2.4s ease-in-out forwards; }
+.midway-hotspot.decoy-active::after {
+  content: "✦";
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  color: #eed8ff;
+  font-size: 28px;
+  text-shadow: 0 0 12px #9f63ff;
+  animation: mischiefSpark 2.4s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes crystalInvitation {
+  0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.85); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+}
+@keyframes crystalBurst {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  45% { opacity: 1; transform: translate(-50%, -50%) scale(3); }
+  100% { opacity: 0.65; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes ghostVisit {
+  0% { left: 87.8%; top: 47.6%; opacity: 0; transform: translate(-50%, -50%) scale(0.1); }
+  15% { left: 81%; top: 38%; opacity: 1; transform: translate(-50%, -50%) scale(0.95) rotate(12deg); }
+  45% { left: 58%; top: 31%; opacity: 1; transform: translate(-50%, -50%) scale(1.25) rotate(-12deg); }
+  68% { left: 42%; top: 35%; opacity: 1; transform: translate(-50%, -50%) scale(1.1) rotate(10deg); }
+  84% { left: 50.3%; top: 44.5%; opacity: 1; transform: translate(-50%, -50%) scale(0.6); }
+  100% { left: 50.3%; top: 44.5%; opacity: 0; transform: translate(-50%, -50%) scale(0.03); }
+}
+@keyframes pumpkinSpirit { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
+@keyframes decoyGlimmer { 0%, 65%, 100% { opacity: 0; } 80% { opacity: 0.45; } }
+@keyframes horsePrance {
+  0%, 100% { opacity: 0; transform: translateY(0) rotate(0); }
+  25% { opacity: 0.9; transform: translateY(-25px) rotate(-12deg); }
+  55% { opacity: 0.7; transform: translate(18px, -48px) rotate(8deg); }
+  85% { opacity: 0.55; transform: translateY(-10px) rotate(-5deg); }
+}
+@keyframes bellPeal {
+  0%, 100% { opacity: 0; transform: rotate(0); }
+  15%, 45% { opacity: 1; transform: rotate(24deg); }
+  30%, 60% { opacity: 0.85; transform: rotate(-24deg); }
+  80% { opacity: 0.6; transform: rotate(10deg); }
+}
+@keyframes moonSpell {
+  0%, 100% { opacity: 0; transform: rotate(0) scale(1); }
+  35% { opacity: 1; transform: translateY(-16px) rotate(90deg) scale(1.35); }
+  75% { opacity: 0.8; transform: translateY(-8px) rotate(300deg) scale(1.1); }
+}
+@keyframes mischiefSpark {
+  0%, 100% { opacity: 0; transform: translate(-50%, 0) scale(0.4); }
+  30% { opacity: 1; transform: translate(-50%, -12px) scale(1.3); }
+  80% { opacity: 0.6; transform: translate(-50%, -30px) scale(0.8); }
 }
 
 .last-ticket-effects {
@@ -673,6 +849,7 @@ button {
   left: 18px;
   right: 18px;
   top: 18px;
+  bottom: 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -741,6 +918,7 @@ button {
 }
 
 .hint {
+  margin-top: auto;
   max-width: 240px;
   padding: 9px 12px;
   border-radius: 12px;
@@ -756,7 +934,7 @@ button {
   position: absolute;
   top: 18px;
   right: 18px;
-  z-index: 8;
+  z-index: 22;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(10, 16, 24, 0.62);
   color: var(--text);
@@ -767,6 +945,25 @@ button {
   text-transform: uppercase;
   cursor: pointer;
 }
+
+.pause-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  text-align: center;
+  background: rgba(35, 38, 43, 0.65);
+  backdrop-filter: grayscale(1) brightness(0.65);
+}
+
+.pause-screen[hidden] { display: none; }
+.pause-screen h2 { margin: 0 0 12px; font-size: 2rem; }
+.pause-screen p { max-width: 240px; line-height: 1.6; color: #eee; }
+
+.scene.is-paused .scene-art,
+.scene.is-paused .last-ticket-effects { filter: grayscale(1) brightness(0.55); }
 
 .story-overlay {
   position: absolute;
@@ -826,6 +1023,7 @@ button {
 }
 
 .scene.is-paused *,
+.scene.is-paused *::after,
 .scene.is-paused .story-target,
 .scene.is-paused .bat,
 .scene.is-paused .mist,
@@ -956,6 +1154,14 @@ button {
   100% { opacity: 1; filter: brightness(1.3); }
 }
 
+@keyframes lanternBeacon {
+  0%, 100% { opacity: 0.78; }
+  22% { opacity: 0.4; }
+  40% { opacity: 0.95; }
+  66% { opacity: 0.6; }
+  82% { opacity: 1; }
+}
+
 @keyframes boothWake {
   0% { transform: translate(-50%, -50%) scale(0.72); filter: blur(10px); }
   100% { transform: translate(-50%, -50%) scale(1.04); filter: blur(5px); }
@@ -984,6 +1190,26 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scene.has-power:not(.crystal-used) .crystal-heart { animation: none; opacity: 0.9; }
+  .scene.crystal-releasing .crystal-heart { animation: none; opacity: 1; }
+  .scene.crystal-releasing .midway-ghost {
+    animation: none;
+    left: 60%;
+    top: 35%;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  .scene.crystal-releasing.spirit-arrived .midway-ghost { opacity: 0; }
+  .scene.spirit-arrived .pumpkin-spirit-light { animation: none; opacity: 0.95; }
+  .scene.pumpkin-awake .pumpkin-spirit-light,
+  .scene.pumpkin-awake .booth-window-light { animation: none; opacity: 0.95; }
+  .scene.has-power:not(.story-playing):not(.crystal-releasing) .object-reaction { animation: none; opacity: 0.22; }
+  .scene .midway-hotspot.decoy-active .object-reaction { animation: none; opacity: 0.9; }
+  .midway-hotspot.decoy-active::after { animation: none; opacity: 1; }
+  .scene.is-started:not(.has-power) .lantern-beacon {
+    animation: none !important;
+    opacity: 0.85;
+  }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;

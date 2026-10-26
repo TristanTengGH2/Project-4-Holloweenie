@@ -23,6 +23,7 @@
 - No external JavaScript packages, CDN scripts, or web fonts are referenced by the current HTML. Fonts use the device's Arial/Helvetica/sans-serif stack.
 - Current wind, owl-like calls, tap tones, and story tones are synthesized by `script.js` using the browser's Web Audio API. No downloaded sound recordings are used. These are prototype sounds; they do not fulfill the brief's request to find and verify public-domain or CC0 recordings.
 - CSS supplies the ticket movement, glow, outlines, ripples, and spark effects.
+- The friendly green ghost, pumpkin-face light, crystal illumination, and spectral horse/bell/moon reactions are original inline SVG/CSS created for this project with Codex assistance. No external artwork or image generator was used for these effects; the decoy silhouettes reuse this project's hand-traced SVG paths.
 
 ## Licensing status and remaining checks
 

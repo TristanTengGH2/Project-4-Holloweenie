@@ -34,7 +34,7 @@ The scene is **The Moonlit Midway**, an abandoned Halloween theme park that wake
 
 The approved stories are:
 
-1. **The Last Ticket:** booth lantern → counter pumpkin → large pumpkin face. The booth wakes and offers a glowing moon-stamped ticket. Dialogue: “One moonlit ticket—for our bravest guest.”
+1. **The Last Ticket:** booth lantern → green crystal ball in the right-hand wagon → large pumpkin face. The booth wakes and offers a glowing moon-stamped ticket. Dialogue: “One moonlit ticket—for our bravest guest.”
 2. **The Riderless Carousel:** hanging bell → carousel light → white horse. The carousel starts and a friendly translucent rider briefly appears. Dialogue: “Every ride remembers its favorite rider.”
 3. **The Fortune After Midnight:** crescent-moon sign → wagon lantern → crystal ball. A spectral park map points toward the castle. Dialogue: “Three lights awaken what the moon left sleeping.”
 
@@ -44,12 +44,17 @@ Each finished story will follow the duration, replay, audiovisual, scene-locking
 
 Build and test the reusable discovery system with **The Last Ticket** only:
 
-- Place touch and keyboard-accessible hotspots over the booth lantern, counter pumpkin, and pumpkin face.
-- Every interaction gives immediate audiovisual feedback. A correct step produces a brief gold outline, a distinct sound, a small particle response, and one illuminated segment in a three-part progress indicator.
+- Place touch and keyboard-accessible hotspots over the booth lantern, green crystal ball, and pumpkin face. The crystal ball replaces the counter pumpkin because the Developer found the pumpkin obscured by fog.
+- Begin with the full emitted-lighting PNG hidden. On entry, isolate the booth lantern's illumination with a soft mask and let it flicker gently; reduced-motion mode shows a steady lantern. The first correct lantern tap switches on the entire lighting layer, visibly waking the park and revealing the green crystal ball. Keep the lights on through the story and afterward. A Replay control resets progress and switches all lights off so the opening can be experienced again. Sunset and brightness baked into the background remain visible.
+- Every interaction gives immediate audiovisual feedback and correct steps illuminate one segment in a three-part progress indicator. Object illumination and scene reactions replace the discovery halos; retain keyboard focus outlines for accessibility.
 - An incorrect interaction produces a soft purple ripple and does not erase correct progress.
-- With no input, the next clue receives a faint shimmer after 6 seconds, a poetic text hint after 12 seconds, and a brief subtle outline after 20 seconds.
+- Give an initial object-specific clue immediately. Object effects provide visual clues: the isolated lantern flickers before power, then the crystal ball itself pulses after power. After 12 seconds give a stronger location clue, and after 20 seconds explicitly identify the object in text. The old outline-state classes no longer reveal halos for touch or pointer users.
+- A correct crystal-ball tap starts a 4.1-second reaction: the orb swells, a large friendly green ghost rises out of the wagon and crosses the midway, then dives into the pumpkin's eyes and grin, which stay green and pulse to invite the final tap. Lock other taps during the flight so it can finish before the ticket story. Pause freezes the ghost animation and its timers; reduced-motion mode shows a static ghost, then the lit pumpkin without flight. Replay clears both the ghost and pumpkin illumination.
+- The final pumpkin tap turns its green face warm orange-gold with a gentle 1.2-second flare. The booth window fills with amber light as the existing 8.2-second ticket story begins. Warm face/window illumination persists after the story; Replay resets it. Reduced-motion mode uses steady illumination instead of the flare.
+- The carousel horse, hanging bell, and crescent-moon sign are tappable decoys. After power they intermittently glint to invite exploration. Tapping makes a spectral horse leap, a bell swing, or a purple moon spin, with a distinct synthesized tone, star effect, and flavor text. No progress is awarded or erased, and decoys do not postpone hint escalation. Repeated taps restart the current decoy effect; only one decoy reaction plays at a time. Reduced-motion mode uses stationary illuminated silhouettes.
 - Emphasis may dim the surrounding scene, but the next object must remain readable and the hint must not directly reveal the answer.
 - Progress, hint timers, feedback, and interaction must all stop while paused.
+- Pause adds a grey, desaturated overlay with a centered Paused message. The same control becomes Resume and remains above the overlay; all target buttons are disabled until resumed.
 - While a story sequence plays, all unrelated scene interaction is disabled. The scene clearly returns to exploration afterward.
 
 Acceptance checks:

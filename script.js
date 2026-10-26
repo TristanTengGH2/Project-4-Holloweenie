@@ -2,6 +2,8 @@ const scene = document.getElementById('scene');
 const startScreen = document.getElementById('startScreen');
 const enterButton = document.getElementById('enterButton');
 const pauseToggle = document.getElementById('pauseToggle');
+const pauseScreen = document.getElementById('pauseScreen');
+const replayButton = document.getElementById('replayButton');
 const hintText = document.getElementById('hintText');
 const storyOverlay = document.getElementById('storyOverlay');
 const storyTitle = document.getElementById('storyTitle');
@@ -15,6 +17,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 let isStarted = false;
 let isPaused = false;
 let storyPlaying = false;
+let crystalPlaying = false;
 let audioContext = null;
 let ambientWind = null;
 let owlTimer = null;
@@ -22,24 +25,33 @@ let activeStoryHint = '';
 
 const timerGroups = {
   hints: [],
-  story: []
+  story: [],
+  feedback: [],
+  crystal: [],
+  decoys: []
 };
 
 const lastTicket = {
-  sequence: ['booth-lantern', 'counter-pumpkin', 'pumpkin-face'],
+  sequence: ['booth-lantern', 'crystal-ball', 'pumpkin-face'],
   current: 0,
   complete: false
 };
 
 const progressHints = [
-  'A warm glimmer near the booth is waiting to be noticed.',
-  'Something small watches from the place where tickets changed hands.',
-  'The largest grin is holding the final spark.'
+  ['The midway has gone dark. One lantern still flickers beside the ticket window.', 'Look beneath the pumpkin roof, on the left side of the booth window.', 'Tap the flickering lantern beside the booth window to wake the midway lights.'],
+  ['A green glow answers from across the midway.', 'Look inside the fortune-teller’s wagon on the right.', 'The glowing green crystal ball is waiting inside the right-hand wagon.'],
+  ['Bring the magic back to the booth’s biggest smile.', 'Look above the ticket window, beneath the curling stem.', 'The giant smiling pumpkin above the booth holds the last spark.']
 ];
+
+const decoyResponses = {
+  horse: 'A ghostly horse leaps off the carousel… and slips back into its painted saddle. No ticket stamp, just a little mischief!',
+  bell: 'Ding-ding-ding! The bell rings itself silly. The midway laughs, but your ticket stays the same.',
+  'moon-sign': 'The moon spins a purple spell… then forgets what it was casting. Your ticket progress is safe.'
+};
 
 const targetTones = {
   'booth-lantern': 340,
-  'counter-pumpkin': 430,
+  'crystal-ball': 430,
   'pumpkin-face': 540
 };
 
@@ -96,7 +108,7 @@ function getExplorationHint() {
     return 'The ticket is stamped. Tap the booth lantern to replay the sequence.';
   }
 
-  return progressHints[lastTicket.current];
+  return progressHints[lastTicket.current][0];
 }
 
 function setMidwayHotspotsEnabled(enabled) {
@@ -108,8 +120,12 @@ function setMidwayHotspotsEnabled(enabled) {
 function setPaused(paused) {
   isPaused = paused;
   pauseToggle.textContent = paused ? 'Resume' : 'Pause';
+  pauseToggle.setAttribute('aria-label', paused ? 'Resume the scene' : 'Pause the scene');
+  pauseToggle.setAttribute('aria-pressed', String(paused));
+  pauseScreen.hidden = !paused;
   scene.classList.toggle('is-paused', paused);
-  setMidwayHotspotsEnabled(isStarted && !paused && !storyPlaying);
+  setMidwayHotspotsEnabled(isStarted && !paused && !storyPlaying && !crystalPlaying);
+  replayButton.disabled = paused || storyPlaying;
 
   if (audioContext && audioContext.state === 'running' && paused) {
     audioContext.suspend();
@@ -124,7 +140,7 @@ function setPaused(paused) {
     setHint('The midway is paused. Press resume when you are ready.');
   } else {
     resumeTimers();
-    setHint(storyPlaying ? activeStoryHint : getExplorationHint());
+    setHint(storyPlaying || crystalPlaying ? activeStoryHint : getExplorationHint());
   }
 }
 
@@ -232,7 +248,7 @@ function resetProgressiveHints() {
     hotspot.classList.remove('hint-shimmer', 'hint-outline');
   });
 
-  if (!isStarted || isPaused || storyPlaying || lastTicket.complete) return;
+  if (!isStarted || isPaused || storyPlaying || crystalPlaying || lastTicket.complete) return;
 
   const expectedTarget = midwayHotspots.find((hotspot) => (
     hotspot.dataset.midwayTarget === lastTicket.sequence[lastTicket.current]
@@ -243,15 +259,17 @@ function resetProgressiveHints() {
     expectedTarget.classList.add('hint-shimmer');
   });
   scheduleTimer('hints', 12000, () => {
-    setHint(progressHints[lastTicket.current]);
+    setHint(progressHints[lastTicket.current][1]);
   });
   scheduleTimer('hints', 20000, () => {
     expectedTarget.classList.remove('hint-shimmer');
     expectedTarget.classList.add('hint-outline');
+    setHint(progressHints[lastTicket.current][2]);
   });
 }
 
 function showTapFeedback(target, type) {
+  clearTimerGroup('feedback');
   midwayHotspots.forEach((hotspot) => {
     hotspot.classList.remove('tap-correct', 'tap-incorrect');
   });
@@ -259,19 +277,20 @@ function showTapFeedback(target, type) {
   const feedbackClass = type === 'correct' ? 'tap-correct' : 'tap-incorrect';
   target.classList.add(feedbackClass);
 
-  if (!reduceMotion) {
-    target.addEventListener('animationend', () => {
-      target.classList.remove(feedbackClass);
-    }, { once: true });
-  }
+  scheduleTimer('feedback', 900, () => target.classList.remove(feedbackClass));
 }
 
 function resetLastTicket() {
   clearTimerGroup('story');
+  clearTimerGroup('crystal');
+  clearTimerGroup('decoys');
+  crystalPlaying = false;
   lastTicket.current = 0;
   lastTicket.complete = false;
   storyPlaying = false;
   activeStoryHint = '';
+  scene.classList.remove('has-power', 'crystal-releasing', 'spirit-arrived', 'crystal-used', 'pumpkin-awake');
+  replayButton.hidden = true;
   scene.classList.remove(
     'story-lock',
     'story-playing',
@@ -282,7 +301,7 @@ function resetLastTicket() {
     'phase-release'
   );
   midwayHotspots.forEach((hotspot) => {
-    hotspot.classList.remove('step-complete', 'tap-correct', 'tap-incorrect', 'hint-shimmer', 'hint-outline');
+    hotspot.classList.remove('step-complete', 'tap-correct', 'tap-incorrect', 'hint-shimmer', 'hint-outline', 'decoy-active');
   });
   updateProgress();
   setStoryOverlay('The Last Ticket', 'One moonlit ticket—for our bravest guest.', false);
@@ -303,16 +322,20 @@ function finishLastTicketStory() {
   );
   setStoryOverlay('The Last Ticket', '“One moonlit ticket—for our bravest guest.”', false);
   setMidwayHotspotsEnabled(!isPaused);
-  setHint('The ticket is stamped. Tap the booth lantern to replay the sequence.');
+  replayButton.hidden = false;
+  replayButton.disabled = isPaused;
+  setHint('The ticket is stamped and the midway shines. Replay turns the lights off for another visit.');
 }
 
 function startLastTicketStory() {
   clearTimerGroup('hints');
+  clearTimerGroup('decoys');
+  midwayHotspots.forEach((hotspot) => hotspot.classList.remove('decoy-active', 'hint-shimmer', 'hint-outline'));
   lastTicket.complete = true;
   storyPlaying = true;
-  activeStoryHint = 'The ticket booth creaks awake beneath the moon.';
+  activeStoryHint = 'The pumpkin flares orange! Its magic wakes the ticket window.';
   setMidwayHotspotsEnabled(false);
-  scene.classList.add('story-lock', 'story-playing', 'story-last-ticket', 'phase-awake');
+  scene.classList.add('story-lock', 'story-playing', 'story-last-ticket', 'phase-awake', 'pumpkin-awake');
   setHint(activeStoryHint);
   playTone({ frequency: 190, duration: 0.55, type: 'sawtooth', volume: 0.05 });
 
@@ -341,11 +364,51 @@ function startLastTicketStory() {
   scheduleTimer('story', 8200, finishLastTicketStory);
 }
 
+function releaseCrystalGhost() {
+  clearTimerGroup('hints');
+  clearTimerGroup('decoys');
+  midwayHotspots.forEach((hotspot) => hotspot.classList.remove('hint-shimmer', 'hint-outline', 'decoy-active'));
+  crystalPlaying = true;
+  setMidwayHotspotsEnabled(false);
+  scene.classList.add('crystal-releasing', 'crystal-used');
+  activeStoryHint = 'A friendly green ghost bursts out of the crystal ball! Follow it across the midway.';
+  setHint(activeStoryHint);
+  playTone({ frequency: 280, duration: 1.3, type: 'sine', volume: 0.075 });
+  scheduleTimer('crystal', 3100, () => {
+    scene.classList.add('spirit-arrived');
+    activeStoryHint = 'The ghost dives into the pumpkin! Its green eyes and grin are waiting for your touch.';
+    setHint(activeStoryHint);
+    playTone({ frequency: 620, duration: 0.6, type: 'triangle', volume: 0.065 });
+  });
+  scheduleTimer('crystal', 4100, () => {
+    scene.classList.remove('crystal-releasing');
+    crystalPlaying = false;
+    setMidwayHotspotsEnabled(!isPaused);
+    resetProgressiveHints();
+  });
+}
+
+function playDecoy(target, name) {
+  // One reaction at a time makes rapid tapping restart cleanly and keeps timers bounded.
+  clearTimerGroup('decoys');
+  midwayHotspots.forEach((hotspot) => hotspot.classList.remove('decoy-active'));
+  void target.offsetWidth;
+  target.classList.add('decoy-active');
+  playTone({ frequency: { horse: 170, bell: 720, 'moon-sign': 250 }[name], duration: 0.5, type: 'sine', volume: 0.055 });
+  setHint(decoyResponses[name]);
+  scheduleTimer('decoys', 2400, () => target.classList.remove('decoy-active'));
+}
+
 function handleMidwayTap(event) {
   const target = event.currentTarget;
-  if (isPaused || storyPlaying) return;
+  if (!isStarted || isPaused || storyPlaying || crystalPlaying) return;
 
   const actual = target.dataset.midwayTarget;
+
+  if (decoyResponses[actual]) {
+    playDecoy(target, actual);
+    return;
+  }
 
   if (lastTicket.complete) {
     if (actual !== lastTicket.sequence[0]) {
@@ -369,12 +432,21 @@ function handleMidwayTap(event) {
 
   showTapFeedback(target, 'correct');
   target.classList.add('step-complete');
+  if (actual === 'booth-lantern') {
+    scene.classList.add('has-power');
+    playTone({ frequency: 190, duration: 0.45, type: 'sawtooth', volume: 0.035 });
+  }
   lastTicket.current += 1;
   updateProgress();
   playTone({ frequency: targetTones[actual], duration: 0.24, type: 'triangle', volume: 0.075 });
 
+  if (actual === 'crystal-ball') {
+    releaseCrystalGhost();
+    return;
+  }
+
   if (lastTicket.current < lastTicket.sequence.length) {
-    setHint(`${lastTicket.current} of 3 ticket stamps glow. The midway is listening.`);
+    setHint(`${actual === 'booth-lantern' ? 'The whole midway lights up! ' : ''}${lastTicket.current} of 3 ticket stamps glow. ${getExplorationHint()}`);
     resetProgressiveHints();
     return;
   }
@@ -389,6 +461,12 @@ function bindMidwayInteractions() {
 }
 
 function prepareMidwayInteractionMap() {
+  Object.keys(decoyResponses).forEach((name) => {
+    const target = midwayHotspots.find((hotspot) => hotspot.dataset.midwayTarget === name);
+    const reaction = target.querySelector('svg').cloneNode(true);
+    reaction.setAttribute('class', 'object-reaction');
+    target.appendChild(reaction);
+  });
   document.querySelectorAll('.story-target').forEach((element) => {
     element.classList.add('legacy-story-target');
     element.setAttribute('aria-hidden', 'true');
@@ -398,6 +476,7 @@ function prepareMidwayInteractionMap() {
 
 function beginExperience() {
   isStarted = true;
+  scene.classList.add('is-started');
   startScreen.classList.add('hidden');
   setMidwayHotspotsEnabled(true);
   createAudioContext();
@@ -407,6 +486,13 @@ function beginExperience() {
 }
 
 enterButton.addEventListener('click', beginExperience);
+replayButton.addEventListener('click', () => {
+  if (!isStarted || isPaused || storyPlaying) return;
+  resetLastTicket();
+  setMidwayHotspotsEnabled(true);
+  setHint(getExplorationHint());
+  resetProgressiveHints();
+});
 pauseToggle.addEventListener('click', () => {
   if (!isStarted) return;
   setPaused(!isPaused);
