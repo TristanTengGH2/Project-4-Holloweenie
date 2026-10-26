@@ -28,6 +28,35 @@ Do not begin the carousel or fortune-wagon triggers until the shared interaction
 
 ## Evidence and revisions
 
+### Deployment and development record
+
+- Live HTTPS prototype: https://tristantenggh2.github.io/Project-4-Holloweenie/
+- Deployment: GitHub Pages, `main` branch, repository root. On October 19, GitHub reported build success for `d4cfae9`; the live HTML, background, and ticket image returned HTTP 200. This is delivery evidence, not proof of mobile usability.
+- [Actual commit history](https://github.com/TristanTengGH2/Project-4-Holloweenie/commits/main/) and [snapshot with local inspection command](GIT_LOG.md).
+- [Credits and licensing gaps](CREDITS.md).
+
+### Testing evidence and limits
+
+| Evidence | Result | Limitation |
+| --- | --- | --- |
+| October 19 browser screenshots requested at 390 × 844 and 320 × 700 | Images loaded and hotspot positions were inspected. | Screenshots also showed clipped UI; viewport sizing and Pause visibility need a fresh check. These were desktop captures, not physical-phone tests. |
+| Developer feedback on the trigger | Described it as functionally acceptable; reported broad halos and an unclear small-object clue. | No recorded device, browser, task completion time, or unassisted peer test. |
+| Story payoff screenshot | Generated ticket and dialogue rendered. | The story state was manually staged for the screenshot; this did not test the complete sequence, replay, or pause timing. |
+| JavaScriptCore parse attempt | Script reached a missing-browser-`document` error. | This is not a passing browser runtime or interaction test. |
+| Automated tap testing attempt | Could not complete with the available setup. | Do not mark touch, keyboard, replay, or timer acceptance checks passed. |
+
+### Next verification priorities
+
+1. Open the live URL on a physical phone; record device/browser, fit without scrolling, readable controls, and reliable target taps. Check Pause remains fully visible.
+2. Complete the booth sequence, make a wrong tap after one correct step, replay, and pause during each story beat. Verify that resume preserves remaining timing and no interaction advances while paused.
+3. Verify hint escalation at 6, 12, and 20 seconds and reduced-motion behavior. Record observed results, not just intended behavior.
+4. Run an unassisted peer playtest. Record anonymized observations, separate interpretation, then select revisions.
+5. Resolve Phase 1 gaps: at least three visible ambient effects, verified public-domain/CC0 audio sources, accessible credits, and a complete requirement check. Existing CSS effects behind opaque scene art do not establish visible ambience.
+
+### Deferred refinements and remaining Phase 2 work
+
+Deferred by the Developer: tighter halos and a clearer counter-pumpkin target/clue. Remaining: carousel and fortune-wagon stories, final castle response, final audio, full credits verification, and debrief. No peer playtesting or physical-phone pass has yet been documented.
+
 Record non-identifying playtest observations, separating what Users did or said from your interpretation. Use the findings to choose revision priorities and record what changed and how you verified the improvement.
 
 Keep implementation progress and verification here. Update `research.md` when evidence changes a decision and `spec.md` when intended behavior changes; link to those updates rather than duplicating them. Record consequential changes, not every small adjustment.

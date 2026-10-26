@@ -16,6 +16,18 @@ Start a fresh chat with:
 
 ## Inquiry and decisions
 
+### Approved direction and decision evidence
+
+Live prototype: https://tristantenggh2.github.io/Project-4-Holloweenie/
+
+The Developer chose an illustrated Halloween carnival after discussing the brief's requirement for an original scene. The scene uses a pumpkin ticket booth as its focal point, with a carousel, fortune-teller wagon, and distant castle as supporting features. The approved narrative is a sleeping park awakened by visitor interaction; the Night Attendant is playful, with no gore or realistic violence.
+
+The Developer supplied separate fog and lighting images to support effects. Initial generated layers used different object positions, so emitted lights failed to align with fixtures. A replacement numbered set at 941 × 1672 was supplied and connected. Matching dimensions alone does not prove alignment or independent transparency; the first three files visually appear to repeat the full scene, which limits independent object animation.
+
+The Developer approved the three-story storyboard and requested emphasis at each interaction step. After testing the first trigger, the Developer reported that the halos could fit objects better and the counter-pumpkin clue was unclear. The Developer explicitly deferred those refinements in favor of a functioning prototype. See [plan.md](plan.md) for verification limits and next priorities.
+
+The scene-generation record is incomplete. [CREDITS.md](CREDITS.md) records every current image, available attribution, and unresolved provenance instead of assuming an external license. Sound is currently synthesized; sourced CC0/public-domain recordings remain a brief requirement.
+
 Record only what informs the next build decisions:
 
 - creative alternatives for the scene, stories, and audiovisual direction, with reasons for your choices

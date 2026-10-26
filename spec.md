@@ -16,6 +16,18 @@ Start a fresh chat with:
 
 ## Current build contract
 
+Live prototype: https://tristantenggh2.github.io/Project-4-Holloweenie/
+
+Repository and history: [GitHub](https://github.com/TristanTengGH2/Project-4-Holloweenie), [commits](https://github.com/TristanTengGH2/Project-4-Holloweenie/commits/main/). Asset attribution and licensing status: [CREDITS.md](CREDITS.md).
+
+### System structure
+
+This is a static HTML/CSS/JavaScript application with no package dependencies or build step. GitHub Pages serves the root of `main`. The scene images share a 941 × 1672 coordinate system; percentage-positioned native buttons supply accessible touch targets. The artwork scales inside the viewport and can crop horizontally, so target alignment must be checked at each supported phone size.
+
+`script.js` tracks start, pause, story playback, ordered progress, and completion. Hint and story callbacks use timer groups that preserve remaining delay on pause. CSS animates the ticket and feedback, while Web Audio synthesizes prototype sound. Story completion unlocks exploration and allows replay from the first target. Reduced-motion behavior uses the device preference read before entry plus CSS media rules; it needs direct verification.
+
+The three HUD marks currently count trigger steps for The Last Ticket. They do not yet represent stamps earned from three completed attractions. The final design must distinguish those two forms of progress.
+
 ### Experience direction
 
 The scene is **The Moonlit Midway**, an abandoned Halloween theme park that wakes for one night each year. A playful spirit called the Night Attendant invites the visitor to restart three sleeping attractions. Each completed story awards a glowing ticket stamp; completing all three will briefly illuminate the distant castle.
