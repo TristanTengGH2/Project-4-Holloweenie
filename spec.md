@@ -24,7 +24,7 @@ Repository and history: [GitHub](https://github.com/TristanTengGH2/Project-4-Hol
 
 This is a static HTML/CSS/JavaScript application with no package dependencies or build step. GitHub Pages serves the root of `main`. The scene images share a 941 × 1672 coordinate system; percentage-positioned native buttons supply accessible touch targets. The artwork scales inside the viewport and can crop horizontally, so target alignment must be checked at each supported phone size.
 
-`script.js` tracks start, pause, story playback, ordered progress, and completion. Hint and story callbacks use timer groups that preserve remaining delay on pause. CSS animates the ticket and feedback, while Web Audio synthesizes prototype sound. Story completion unlocks exploration and allows replay from the first target. Reduced-motion behavior uses the device preference read before entry plus CSS media rules; it needs direct verification.
+`script.js` tracks start, pause, story playback, ordered progress, and completion. Hint and story callbacks use timer groups that preserve remaining delay on pause. CSS animates the ticket and feedback. After Enter unlocks audio, Web Audio loads local CC0 wind, bell, and gust buffers alongside the original synthesized melody and feedback. A loading failure retains synthetic fallbacks without blocking play; late-loaded effects are not played out of sync. Suspending the shared audio context freezes both recordings and synthesis. Story completion unlocks exploration and allows replay from the first target. Reduced-motion behavior uses the device preference read before entry plus CSS media rules; see `plan.md` for browser evidence.
 
 The three HUD marks count trigger steps for the selected attraction. A separate Memories restored counter tracks completed stories, so step progress and overall narrative progress are distinct.
 
@@ -86,7 +86,7 @@ After the existing six-second cue delay, cyan sparks and cyan object illuminatio
 
 ## Scope and revisions
 
-All three narrative sequences are implemented; final sourced audio, physical-phone review of the new stories, peer testing, complete brief verification, and the debrief remain open. The next Developer review covers the whole story connection, cyan clue visibility, and the wagon/castle finale.
+All three narrative sequences are implemented, and the Developer reports that the complete journey works on their iPhone. Local CC0 audio has since been integrated; listening/volume review of that revision on iPhone remains pending. Peer testing, complete brief verification, remaining asset-provenance checks, and the debrief remain open.
 
 The current artwork is treated as one aligned composition. Interaction emphasis will use positioned HTML/CSS or SVG overlays so it does not depend on regenerating the scene art.
 

@@ -27,6 +27,8 @@ let audioContext = null;
 let ambientWind = null;
 let owlTimer = null;
 let activeStoryHint = '';
+const soundBuffers = new Map();
+let soundLoading = null;
 
 const timerGroups = {
   hints: [],
@@ -207,8 +209,8 @@ function createAudioContext() {
     audioContext = new AudioCtor();
   }
 
-  if (audioContext.state === 'suspended') {
-    audioContext.resume();
+  if (audioContext.state === 'suspended' && !isPaused) {
+    audioContext.resume().catch(() => {});
   }
 
   return audioContext;
@@ -221,6 +223,60 @@ function makeNoiseBuffer(ctx) {
     channel[i] = (Math.random() * 2 - 1) * 0.45;
   }
   return buffer;
+}
+
+function loadRecordedAudio(ctx) {
+  if (soundLoading) return soundLoading;
+  // Decode after Enter unlocks audio. Failed files leave the synthetic fallback intact.
+  soundLoading = Promise.all(['wind', 'bell', 'gust'].map(async (name) => {
+    try {
+      const response = await fetch(`assets/audio/${name}.wav`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const buffer = await ctx.decodeAudioData(await response.arrayBuffer());
+      soundBuffers.set(name, buffer);
+      if (name === 'wind') {
+        const previous = ambientWind;
+        const noise = ctx.createBufferSource();
+        const gain = ctx.createGain();
+        noise.buffer = buffer;
+        noise.loop = true;
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.16, ctx.currentTime + 1);
+        noise.connect(gain);
+        gain.connect(ctx.destination);
+        noise.start();
+        ambientWind = { noise, gain };
+        if (previous) {
+          previous.gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+          previous.noise.stop(ctx.currentTime + 1);
+          previous.noise.onended = () => {
+            previous.noise.disconnect();
+            previous.gain.disconnect();
+          };
+        }
+      }
+    } catch (error) {
+      console.warn(`Using fallback audio for ${name}:`, error.message);
+    }
+  }));
+  return soundLoading;
+}
+
+function playRecordedSound(name, volume = 0.12) {
+  const buffer = soundBuffers.get(name);
+  if (!buffer || !audioContext || isPaused) return false;
+  const source = audioContext.createBufferSource();
+  const gain = audioContext.createGain();
+  source.buffer = buffer;
+  gain.gain.value = volume;
+  source.connect(gain);
+  gain.connect(audioContext.destination);
+  source.onended = () => {
+    source.disconnect();
+    gain.disconnect();
+  };
+  source.start();
+  return true;
 }
 
 function startAmbientAudio() {
@@ -245,6 +301,7 @@ function startAmbientAudio() {
     noise.start();
     ambientWind = { noise, gain };
   }
+  loadRecordedAudio(ctx);
 
   if (!owlTimer) {
     owlTimer = window.setInterval(() => {
@@ -395,7 +452,7 @@ function startCarouselStory() {
   scene.classList.add('story-playing', 'story-lock', 'story-carousel', 'carousel-lit');
   setMidwayHotspotsEnabled(false);
   setHint(activeStoryHint);
-  playTone({ frequency: 784, duration: 0.5, type: 'triangle', volume: 0.07 });
+  if (!playRecordedSound('bell')) playTone({ frequency: 784, duration: 0.5, type: 'triangle', volume: 0.07 });
   scheduleTimer('story', 1200, () => {
     scene.classList.add('carousel-gallop');
     activeStoryHint = 'A white horse leaps free, carrying a rider made of moonlight!';
@@ -512,6 +569,7 @@ function startFortuneStory() {
     scene.classList.add('wish-travelling');
     activeStoryHint = 'Her wish lifts from the crystal and flies toward the dark castle.';
     setHint(activeStoryHint);
+    playRecordedSound('gust', 0.1);
     playTone({ frequency: 659, duration: 0.9, volume: 0.055 });
   });
   scheduleTimer('story', 6200, () => {
@@ -620,7 +678,7 @@ function startLastTicketStory() {
     activeStoryHint = 'The park’s final guest never used her ticket. You can finish the visit she left behind.';
     setHint(activeStoryHint);
     setStoryOverlay('The Last Ticket', '“One ticket was never used. Perhaps her favorite ride remembers.”', true);
-    playTone({ frequency: 660, duration: 0.6, type: 'sine', volume: 0.08 });
+    if (!playRecordedSound('bell', 0.09)) playTone({ frequency: 660, duration: 0.6, type: 'sine', volume: 0.08 });
   });
 
   scheduleTimer('story', 6100, () => {
@@ -643,7 +701,7 @@ function releaseCrystalGhost() {
   scene.classList.add('crystal-releasing', 'crystal-used');
   activeStoryHint = 'A friendly green ghost bursts out of the crystal ball! Follow it across the midway.';
   setHint(activeStoryHint);
-  playTone({ frequency: 280, duration: 1.3, type: 'sine', volume: 0.075 });
+  if (!playRecordedSound('gust', 0.14)) playTone({ frequency: 280, duration: 1.3, type: 'sine', volume: 0.075 });
   scheduleTimer('crystal', 3100, () => {
     scene.classList.add('spirit-arrived');
     activeStoryHint = 'The ghost dives into the pumpkin! Its green eyes and grin are waiting for your touch.';
@@ -664,7 +722,9 @@ function playDecoy(target, name) {
   midwayHotspots.forEach((hotspot) => hotspot.classList.remove('decoy-active'));
   void target.offsetWidth;
   target.classList.add('decoy-active');
-  playTone({ frequency: { horse: 170, bell: 720, 'moon-sign': 250 }[name], duration: 0.5, type: 'sine', volume: 0.055 });
+  if (name !== 'bell' || !playRecordedSound('bell')) {
+    playTone({ frequency: { horse: 170, bell: 720, 'moon-sign': 250 }[name], duration: 0.5, type: 'sine', volume: 0.055 });
+  }
   setHint(decoyResponses[name]);
   scheduleTimer('decoys', 2400, () => target.classList.remove('decoy-active'));
 }

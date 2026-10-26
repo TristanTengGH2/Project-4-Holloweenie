@@ -28,7 +28,7 @@ The Developer approved the three-story storyboard and requested emphasis at each
 
 On October 26 the Developer revisited these refinements: both the counter pumpkin and a proposed awning bulb were hard to see, whereas the green crystal ball on the right caught their eye. The approved trigger now crosses from the booth to the wagon and returns to the pumpkin face. Shaped SVG strokes retain broad accessible tap regions while highlighting closer to each object. Harmless decoys support exploration without resetting progress. Revised hints name visible features and progressively narrow the location; the strongest hint explicitly identifies the object for users still stuck after 20 seconds.
 
-The scene-generation record is incomplete. [CREDITS.md](CREDITS.md) records every current image, available attribution, and unresolved provenance instead of assuming an external license. Sound is currently synthesized; sourced CC0/public-domain recordings remain a brief requirement.
+The scene-generation record is incomplete. [CREDITS.md](CREDITS.md) records every current image, available attribution, and unresolved provenance instead of assuming an external license. On October 26, publisher-declared CC0 sound assets were sourced and integrated as described below.
 
 Record only what informs the next build decisions:
 
@@ -39,6 +39,8 @@ Record only what informs the next build decisions:
 Investigate unfamiliar techniques or asset sources as needed. Verify usage terms and keep source links and required credits here. Distinguish evidence from assumptions; the Agent's recommendation alone is not evidence.
 
 ## Revisions
+
+October 26 audio decision: retain the original music-box phrase and immediate synthesized feedback, but use local CC0 assets for atmospheric wind, the hanging bell/ticket stamp, and the ghost/wish gust. Verified the license field on the individual publisher pages for [wind1 by Luke.RUSTLTD](https://opengameart.org/content/wind1), [Bell dings/chimes by PWL](https://opengameart.org/content/bell-dingschimes), and [Short wind sound by remaxim](https://opengameart.org/content/short-wind-sound), and followed the linked [CC0 terms](https://creativecommons.org/publicdomain/zero/1.0/). The wind author describes synthesized wind, so this is not represented as a field recording. Original WAVs are hosted locally, approximately 6.4 MB total; this preserves source fidelity at the cost of a larger initial download. Decoding happens after Enter without blocking interaction. Shared Web Audio playback preserves Pause; synthetic fallbacks cover unavailable or still-loading files. Source declarations are evidence of published terms, not independent ownership verification. Full filenames, authors, usage, and download links are in the credits register.
 
 October 26 narrative decision: the Developer approved replacing three loosely related payoffs with one visit. The horse emblem on the recovered ticket motivates the carousel; the rider's line motivates searching the wagon; her shared wish motivates restoring the castle. Changed active clues toward cyan to contrast with warm orange artwork, while retaining green ghost magic, warm successes, purple decoys, the six-second discovery delay, and non-color text/spark cues. The final map/card, ticket emblem, and castle-mask effect are original HTML/SVG/CSS; existing generated assets are reused rather than replacing the scene.
 

@@ -28,6 +28,16 @@ The Developer accepted the booth's functional interaction and authorized carouse
 
 ## Evidence and revisions
 
+### Sourced audio and reported phone test — October 26, 2026
+
+After publication of the three-story journey, the Developer reported that it works fine on their phone; prior context identifies an iPhone. This is self-reported developer testing, not an observed peer playtest. Model, browser version, and a per-check breakdown were not supplied. This updates the pending phone review in the older chronological entries below; it does not cover the subsequent audio revision.
+
+Integrated three locally hosted CC0 WAV assets: Luke.RUSTLTD's wind loop, PWL's bell chime, and remaxim's short gust. Source pages, authors, original downloads, and linked CC0 terms were checked and recorded in `CREDITS.md` and `research.md`. The original carousel phrase, owl-like call, and tap tones remain synthesized. Enter starts audio loading; a brief crossfade replaces fallback wind when the file decodes. Failed files are caught and leave synthetic fallbacks, with no late effects scheduled. All sources share the existing pauseable Web Audio context. iPhone listening review and publication of this revision remain pending.
+
+Verification: `afinfo` identified valid PCM WAVs lasting approximately 60 seconds (wind), 2.08 seconds (bell), and 4.24 seconds (gust). The normal-mode real-touch Chrome journey passed all three stories, progress, input locks, finale, replay, and eight 44-pixel targets at two phone sizes. Additional checks confirmed Enter-only audio initialization, successful decoding of all three files, recorded wind looping, bell/gust calls during the journey, and frozen/resumed audio-context time with Pause. `git diff --check` passed. The temporary test command was `python3 -u /tmp/check_midway_audio.py`.
+
+Verification limitation: the first extended test failed its initial cue timing assertion after spending time loading audio and testing Pause. After adjusting that timing assumption, the journey and audio checks passed. In the blocked-audio portion, all three files failed as intended and the synthetic looping wind was present, but the final first-story completion assertion failed. This second failed test run was not retried, in accordance with `AGENTS.md`. Missing-file end-to-end recovery remains unresolved; the cause has not been established. No new reduced-motion or iPhone listening result is claimed for this audio revision.
+
 ### Cohesive three-story journey — October 26, 2026
 
 Publication checkpoint: the Developer approved the local preview and authorized publishing the three-story version on October 26. The scene, generated carousel rider, separate reference ZIP, updated narrative, and six-second cyan hints are included in this deployment. New iPhone/peer verification remains pending.

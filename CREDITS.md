@@ -22,13 +22,25 @@
 
 - Application implementation: developed in this repository with AI assistance. The initial commit already contained a functioning HTML/CSS/JavaScript prototype; its earlier authorship history is not recorded here.
 - No external JavaScript packages, CDN scripts, or web fonts are referenced by the current HTML. Fonts use the device's Arial/Helvetica/sans-serif stack.
-- Current wind, owl-like calls, tap tones, and story tones are synthesized by `script.js` using the browser's Web Audio API. No downloaded sound recordings are used. These are prototype sounds; they do not fulfill the brief's request to find and verify public-domain or CC0 recordings.
+- Downloaded CC0 audio supplies looping wind, bell chimes, and the ghost/wish gust; see the register below. Web Audio also generates the original carousel melody, owl-like calls, tap feedback, and other story tones. Synthetic wind and tones remain fallbacks if a file cannot load. All audio starts after Enter and shares the pauseable audio context.
 - CSS supplies the ticket movement, glow, outlines, ripples, and spark effects.
 - The friendly green ghost, pumpkin-face light, crystal illumination, and spectral horse/bell/moon reactions are original inline SVG/CSS created for this project with Codex assistance. No external artwork or image generator was used for these effects; the decoy silhouettes reuse this project's hand-traced SVG paths.
 - The ticket's horse emblem reuses that hand-traced horse silhouette as an SVG overlay. The final wish card, illustrated route, travelling star, cyan clue sparks, and masked castle illumination are original HTML/SVG/CSS made with Codex assistance, using the already credited scene lighting. No additional external assets were added for the linked storyline.
 
+## Audio asset register
+
+Source pages and their linked CC0 terms were checked on October 26, 2026. All three publishers list **[CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)**. Files are redistributed unchanged except for local filenames; playback gain is adjusted in code. These are sound assets, not necessarily field recordings: `wind1` is explicitly synthesized by its author.
+
+| Local file | Author and publisher source | Original download | Use |
+| --- | --- | --- | --- |
+| `assets/audio/wind.wav` | Luke.RUSTLTD — [wind1](https://opengameart.org/content/wind1) | [wind1.wav](https://opengameart.org/sites/default/files/wind1.wav) | Approximately 60-second looping outdoor wind, crossfaded from the loading fallback. |
+| `assets/audio/bell.wav` | PWL — [Bell dings/chimes](https://opengameart.org/content/bell-dingschimes) | [bell_ding1.wav](https://opengameart.org/sites/default/files/bell_ding1.wav) | Hanging bell, carousel opening, and ticket stamp. Publisher also explicitly dedicates it to the public domain. |
+| `assets/audio/gust.wav` | remaxim — [Short wind sound](https://opengameart.org/content/short-wind-sound) | [short wind sound.wav](https://opengameart.org/sites/default/files/short%20wind%20sound.wav) | Green ghost release and wish travelling toward the castle. |
+
+Credits are retained voluntarily; no creator endorsement is implied. CC0 status here reflects the publisher's declaration, not an independent audit of ownership. The roughly 6.4 MB of WAV assets are hosted locally; the app does not depend on third-party audio servers during play.
+
 ## Licensing status and remaining checks
 
-No project-wide reuse license has been selected. Public repository access is not a statement that all material is public domain or CC0. No third-party asset has been verified as CC0 in this project yet.
+No project-wide reuse license has been selected. Public repository access is not a statement that all material is public domain or CC0. Only the three sourced audio files above have verified publisher-declared CC0 terms; that dedication does not apply to the scene artwork, course template, or application code.
 
 Before final submission, confirm the Developer's preferred credit, document the scene-generation provenance and any reference-image rights, confirm course-template attribution requirements, and record source URLs and usage terms for any external assets subsequently added. Do not assign a license to externally supplied material without evidence.

@@ -30,9 +30,11 @@ After power is restored, the green crystal ball pulses. Its correct tap releases
 
 All three stories are implemented. The Last Ticket uses the booth lantern → green crystal ball → pumpkin face and reveals a horse-stamped ticket. Choose **Explore the carousel**, then tap bell → carousel roof light → white horse for the guest's last ride. Choose **Follow her wish**, then tap crescent-moon sign → wagon-entrance lantern → crystal ball to restore the castle. The sequences last 8.2, 8.2, and 8.7 seconds respectively. Bell/horse/moon targets act as decoys outside their real story sequences. Pause greys out the scene and exposes Resume; each story can replay, and returning to the booth resets the visit. Cyan cues start after six seconds; stronger text hints follow at 12 and 20 seconds. Memories restored counts completed stories separately from the current three-step trigger.
 
-The full journey has passed normal and reduced-motion browser checks with emulated touch. The Developer approved the local preview and authorized publication on October 26, 2026. The Developer reports testing earlier behavior on an iPhone; the new story connection and finale still need physical-phone review. No peer playtest is recorded.
+The full journey has passed normal and reduced-motion browser checks with emulated touch. The Developer approved publication and subsequently reported that the complete experience works on their iPhone on October 26, 2026. Device model, browser version, and individual results were not supplied. No peer playtest is recorded.
 
-This is a work-in-progress submission, not a claim that all brief requirements have passed. In particular, physical-phone verification, peer playtesting, final audio sourcing, visible ambient effects, and final credits verification remain open.
+CC0 wind, bell, and gust assets now accompany the original synthesized melody and feedback. See [credits and verified audio sources](CREDITS.md). The audio revision still needs an iPhone listening check and publication.
+
+This is a work-in-progress submission, not a claim that all brief requirements have passed. Peer playtesting, visible ambient-effects review, remaining visual/template provenance, and the final debrief remain open.
 
 ## Project documents
 
