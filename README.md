@@ -38,9 +38,9 @@ CC0 wind, bell, and gust assets accompany the original synthesized melody and fe
 
 The synthetic owl has been replaced with a Developer-approved NPS public-domain spotted-owl recording. Its first quiet call occurs after 18 seconds, then at 24-second intervals during exploration; Pause preserves the countdown and playback position. Missing owl audio is skipped rather than replaced with the rejected synthetic sound.
 
-Three visible ambient effects sit within the artwork: slowly drifting fog, occasional flying bats, and gentle light shimmer after power returns. They begin after Enter, freeze with Pause, and become static under reduced motion. Final phone visual review of the latest revision remains a submission check.
+Three visible ambient effects sit within the artwork: slowly drifting fog, occasional flying bats, and gentle light shimmer after power returns. They begin after Enter, freeze with Pause, and become static under reduced motion. Tristan Teng reports that the published version works on his phone and approves the layout.
 
-This is a work-in-progress submission, not a claim that all brief requirements have passed. Detailed peer notes, final phone review of the newest changes, remaining visual/template provenance, and the course-provided debrief remain open. See the [current requirement checklist](plan.md#current-requirement-checklist).
+Developer and creative direction: Tristan Teng. He confirms the scene was AI-generated using GPT-5.6 Sol without outside references. Course-template attribution requirements and the course-provided debrief remain open; earlier automated-test limits are retained in the [current requirement checklist](plan.md#current-requirement-checklist). Developer approval is not represented as completion of those automated checks.
 
 ## Project documents
 

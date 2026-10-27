@@ -20,17 +20,17 @@ This supersedes the older checkpoint/status notes below. Reviewed October 26, 20
 
 | Requirement | Current evidence/status | Remaining action |
 | --- | --- | --- |
-| One vertical scene, focal point, at least three features | Implemented: pumpkin booth, carousel, fortune wagon, castle; browser fit checks at multiple phone sizes. | Final phone check after publishing the newest changes. |
+| One vertical scene, focal point, at least three features | Implemented: pumpkin booth, carousel, fortune wagon, castle; browser fit checks at multiple phone sizes. Tristan reports the published version works on his phone and approves its layout. | Developer phone/layout review complete; no independent observation claimed. |
 | Three visible ambient effects | Fog drift, SVG bats, powered-light shimmer; normal/reduced-motion browser tests and screenshots reviewed. | Developer review of the revised, stronger fog drift. |
-| Looping ambience and sourced story audio | Three publisher-declared CC0 assets and an NPS public-domain owl recording credited; decode, pause and fallback checks passed. Developer approved the replacement owl after hearing the supplied preview. | Publish local audio changes. |
+| Looping ambience and sourced story audio | Three publisher-declared CC0 assets and an NPS public-domain owl recording credited; decode, pause and fallback checks passed. Developer approved the replacement owl; audio published with `4e70bf6`. | No outstanding listening task. |
 | Three distinct 5–10s replayable audiovisual stories | Full normal journey passed after hint changes; story durations 8.2, 8.2, 8.7 seconds, with dialogue, progress and replay. Earlier reduced-motion journey also passed. | Retest latest revision on phone. |
 | Ordered triggers, feedback, progressive hints | Opening glow retained; eight neutral glints after power; requested text then glow; timed text remains. Focused tests passed the booth help flow in normal/reduced motion before a carousel text assertion stopped both runs. | Correct the test's expected progress-prefixed text and finish requested-hint regression/layout checks before declaring full verification. |
 | Start/Enter and reduced motion | Existing start and static reduced-motion ambience checked. Developer confirms Tab/Enter. Native keyboard checks now cover arrow entry without Tab, spatial movement, Hint, Pause, first-story completion and replay. | Final updated-build review. |
 | One shared Pause for motion, audio, effects, timers and input | Audio context, CSS/pseudo-elements, story/hint timers, target/Hint locks checked. Owl now uses one pause-aware ambience timer; remaining countdown and audio time freeze/resume in dedicated browser checks. | Final physical-phone review; the previously identified owl timer gap is resolved. |
 | Touch/keyboard usability, readable controls | Eight 44px scene targets, corrected wagon spacing, native buttons and focus outlines. Requested Hint UI reviewed at 390px. Directional keyboard tests passed at three phone sizes; native Tab, Enter/Space, Hint/Pause and first-story replay passed. | Complete the separate narrow-screen Hint-button size/layout assertions; do not claim a complete contrast audit. |
-| Public HTTPS and physical smartphone | Earlier journey deployed at https://tristantenggh2.github.io/Project-4-Holloweenie/ and reported working on iPhone. | Commit/push local revisions and verify the updated deployment. |
+| Public HTTPS and physical smartphone | `4e70bf6` deployed successfully at https://tristantenggh2.github.io/Project-4-Holloweenie/; served HTML/JS/CSS/owl matched local files. Tristan subsequently reported it works on his phone. | Complete for this published app checkpoint; documentation updates remain local. |
 | Peer testing and consequential revision | One peer, Developer's base-model iPhone 14; reported functional, too-easy highlighting, noticeably AI-generated art. Requested hints address discoverability; art retained by choice. | Optional peer retest of revised hints; browser version, exact test date, and unassisted observation details were not supplied. No extra testers or observations are invented. |
-| Credits, sources and permitted assets | `CREDITS.md` lists code/AI assistance, visual provenance and verified publisher CC0 audio terms. | Confirm preferred Developer display name, missing scene-generation/reference-rights details, and course-template attribution requirements. |
+| Credits, sources and permitted assets | Tristan Teng confirms his credit and GPT-5.6 Sol scene-generation workflow with no outside references. `CREDITS.md` also records code/AI assistance and verified publisher audio terms. | Confirm any course-template attribution requirements. |
 | Project documents and Git log | README/research/spec/plan updated; Git snapshot refreshed through local commit `cca2f5c`. | Commit final changes and refresh publication status after push. |
 | Course debrief | Course-provided `debrief.md` is absent from the repository. | Developer must supply its template/instructions and personal reflections; do not invent a completed debrief. |
 
@@ -47,6 +47,10 @@ Main risk: the visual targets are embedded in a detailed image, so hotspots and 
 The Developer accepted the booth's functional interaction and authorized carousel development on October 26. The fortune-wagon story remains outside the current implementation checkpoint.
 
 ## Evidence and revisions
+
+### Developer credit and final phone/layout approval — October 26, 2026
+
+After deployment, Tristan reported that the app works on his phone and approved the layout. He confirmed his preferred credit as Tristan Teng and described the scene as AI-generated using GPT-5.6 Sol with no outside references. Updated the credits and research provenance accordingly, attributing the generation workflow to his report rather than asserting an independently verified image backend. This resolves the preferred-name and outside-reference questions. Course-template attribution requirements and the course-provided debrief remain open. Phone/layout approval does not convert unfinished automated hint assertions into passed tests. These documentation corrections are local and are not yet committed or pushed.
 
 ### Approved publication checkpoint — October 26, 2026
 

@@ -28,7 +28,7 @@ The Developer approved the three-story storyboard and requested emphasis at each
 
 On October 26 the Developer revisited these refinements: both the counter pumpkin and a proposed awning bulb were hard to see, whereas the green crystal ball on the right caught their eye. The approved trigger now crosses from the booth to the wagon and returns to the pumpkin face. Shaped SVG strokes retain broad accessible tap regions while highlighting closer to each object. Harmless decoys support exploration without resetting progress. Revised hints name visible features and progressively narrow the location; the strongest hint explicitly identifies the object for users still stuck after 20 seconds.
 
-The scene-generation record is incomplete. [CREDITS.md](CREDITS.md) records every current image, available attribution, and unresolved provenance instead of assuming an external license. On October 26, publisher-declared CC0 sound assets were sourced and integrated as described below.
+Tristan Teng confirms that he generated the scene using GPT-5.6 Sol with no outside reference images. This workflow attribution is based on his report; a separate image-generation backend is not recorded. [CREDITS.md](CREDITS.md) records every current image and its provenance without assuming an external stock license or CC0 dedication. On October 26, publisher-declared CC0 sound assets were sourced and integrated as described below.
 
 Record only what informs the next build decisions:
 
