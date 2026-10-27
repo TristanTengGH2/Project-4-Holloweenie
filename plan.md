@@ -14,7 +14,27 @@ Start or continue a fresh chat with:
 
 `Read the project documents, inspect the current build, and help me complete the next unchecked checkpoint.`
 
-## Checkpoints
+## Current requirement checklist
+
+This supersedes the older checkpoint/status notes below. Reviewed October 26, 2026 against `brief.md`; implemented is not the same as independently verified or published.
+
+| Requirement | Current evidence/status | Remaining action |
+| --- | --- | --- |
+| One vertical scene, focal point, at least three features | Implemented: pumpkin booth, carousel, fortune wagon, castle; browser fit checks at multiple phone sizes. | Final phone check after publishing the newest changes. |
+| Three visible ambient effects | Fog drift, SVG bats, powered-light shimmer; normal/reduced-motion browser tests and screenshots reviewed. | Developer review of the revised, stronger fog drift. |
+| Looping ambience and sourced story audio | Three publisher-declared CC0 assets and an NPS public-domain owl recording credited; decode, pause and fallback checks passed. Developer approved the replacement owl after hearing the supplied preview. | Publish local audio changes. |
+| Three distinct 5–10s replayable audiovisual stories | Full normal journey passed after hint changes; story durations 8.2, 8.2, 8.7 seconds, with dialogue, progress and replay. Earlier reduced-motion journey also passed. | Retest latest revision on phone. |
+| Ordered triggers, feedback, progressive hints | Opening glow retained; eight neutral glints after power; requested text then glow; timed text remains. Focused tests passed the booth help flow in normal/reduced motion before a carousel text assertion stopped both runs. | Correct the test's expected progress-prefixed text and finish requested-hint regression/layout checks before declaring full verification. |
+| Start/Enter and reduced motion | Existing start and static reduced-motion ambience checked. Developer confirms Tab/Enter. Native keyboard checks now cover arrow entry without Tab, spatial movement, Hint, Pause, first-story completion and replay. | Final updated-build review. |
+| One shared Pause for motion, audio, effects, timers and input | Audio context, CSS/pseudo-elements, story/hint timers, target/Hint locks checked. Owl now uses one pause-aware ambience timer; remaining countdown and audio time freeze/resume in dedicated browser checks. | Final physical-phone review; the previously identified owl timer gap is resolved. |
+| Touch/keyboard usability, readable controls | Eight 44px scene targets, corrected wagon spacing, native buttons and focus outlines. Requested Hint UI reviewed at 390px. Directional keyboard tests passed at three phone sizes; native Tab, Enter/Space, Hint/Pause and first-story replay passed. | Complete the separate narrow-screen Hint-button size/layout assertions; do not claim a complete contrast audit. |
+| Public HTTPS and physical smartphone | Earlier journey deployed at https://tristantenggh2.github.io/Project-4-Holloweenie/ and reported working on iPhone. | Commit/push local revisions and verify the updated deployment. |
+| Peer testing and consequential revision | One peer, Developer's base-model iPhone 14; reported functional, too-easy highlighting, noticeably AI-generated art. Requested hints address discoverability; art retained by choice. | Optional peer retest of revised hints; browser version, exact test date, and unassisted observation details were not supplied. No extra testers or observations are invented. |
+| Credits, sources and permitted assets | `CREDITS.md` lists code/AI assistance, visual provenance and verified publisher CC0 audio terms. | Confirm preferred Developer display name, missing scene-generation/reference-rights details, and course-template attribution requirements. |
+| Project documents and Git log | README/research/spec/plan updated; Git snapshot refreshed through local commit `cca2f5c`. | Commit final changes and refresh publication status after push. |
+| Course debrief | Course-provided `debrief.md` is absent from the repository. | Developer must supply its template/instructions and personal reflections; do not invent a completed debrief. |
+
+## Historical checkpoints
 
 Main risk: the visual targets are embedded in a detailed image, so hotspots and outlines can drift when the phone viewport changes. Use percentage-based regions tied to the shared 941 × 1672 artwork coordinate system and verify them at multiple viewport sizes.
 
@@ -27,6 +47,68 @@ Main risk: the visual targets are embedded in a detailed image, so hotspots and 
 The Developer accepted the booth's functional interaction and authorized carousel development on October 26. The fortune-wagon story remains outside the current implementation checkpoint.
 
 ## Evidence and revisions
+
+### Approved publication checkpoint — October 26, 2026
+
+The Developer approved the owl replacement, requested hints, and Tab/Enter/arrow-key controls, then explicitly requested commit and push. This checkpoint packages the touch-spacing fix, visible ambience and stronger fog drift, two-level requested hints and neutral tappable glints, public-domain owl recording with pause-aware scheduling, no-Tab arrow entry, source credits, peer report, and requirement checklist. Previously recorded local/uncommitted notes below describe earlier checkpoints and are superseded by this publication authorization. The separate `cca2f5c` audio commit will be pushed alongside this checkpoint. Existing successful browser results are recorded below; focused hint-test/layout and final submission gaps remain disclosed, not silently marked complete. GitHub Pages deployment status and served-file verification will be reported after the push.
+
+### Arrow entry without Tab — October 26, 2026
+
+The Developer reports that arrow navigation works and requested using it before pressing Tab. Added a document-level entry handler: after Enter, an unmodified arrow key focuses the first enabled scene object when page/hidden-start-button focus is active. The entry press does not activate or move beyond that object. Later arrow presses use the existing approved spatial navigation. Interactive controls retain their keys; handled scene arrows do not trigger the entry handler again. Start, Pause, ghost/story locks and modifier-key guards remain in force.
+
+Verification: `python3 -u /tmp/check_midway_arrow_entry.py` passed real pointer entry followed by arrow-only initial focus, visible focus, a directional matrix at 320 × 568, 320 × 700 and 390 × 844 (28 moves in the correct half-plane per size), boundary behavior, unchanged progress during navigation, native Tab to Hint, Enter/Space hint activation, no arrow hijack on Hint/Pause, Pause/reaction/story locks, keyboard completion of the first story and replay, and reacquiring scene focus without Tab after blur while respecting Pause. Reviewed `/tmp/midway-arrow-key-entry.png`. The first run of this new test inadvertently retained the older test's fixed-destination expectation; after removing that test assumption in favor of directional checks, the full run passed. This supersedes the earlier incomplete arrow-test status, without changing the diagonal-friendly navigation the Developer said worked. `git diff --check` passed. Changes are local, uncommitted and not pushed.
+
+### Spatial arrow-key navigation — October 26, 2026
+
+The Developer approved the requested hints and replacement owl, confirmed Tab and Enter work, and asked to add arrow keys. Added directional focus movement to the eight scene buttons: choose a nearby enabled object in the pressed direction, with a sideways-distance penalty. At an edge, retain focus. Arrows never activate objects, and the existing native Tab/Enter/Space behavior is retained. Hint, Pause and navigation controls keep their normal keyboard behavior; modified arrows are not intercepted. Keyboard start focuses the initial lantern; touch/mouse start does not force focus. Existing state guards prevent movement during Pause, ghost reactions and stories. Nothing has been committed or pushed.
+
+Verification limitation: the first run of `python3 -u /tmp/check_midway_arrow_keys.py` failed keyboard entry because its CDP Enter event lacked text/keypress input. A diagnostic event log confirmed the application started and focused the lantern when a complete Enter keystroke was sent. After correcting that test input, the second run passed keyboard entry but failed a combined assertion expecting ArrowRight to focus the crystal ball, preserve progress, and show keyboard focus. The actual destination was not logged in that assertion. Source inspection shows the current scoring can prefer the nearer upper-right pumpkin over the farther right-hand crystal ball. In accordance with `AGENTS.md`, no further test variations were run after these two failed runs. The remaining direction matrix, Tab/Space, lock, replay, and layout checks in that new script were not reached. Resolve the design choice (mostly straight directional navigation versus allowing nearer diagonals) before further implementation/verification; existing Developer-reported Tab/Enter support is not a claim that the new arrow navigation passed.
+
+### Real owl recording and pause-aware calls — October 26, 2026
+
+The Developer rejected the synthesized owl because it did not sound like an owl and requested a different sound. Downloaded the NPS spotted-owl recording from Yosemite (`assets/audio/owl.mp3`), unchanged apart from its filename, after verifying the individual NPS page's credit and public-domain usage notice. Source, download and terms are in `CREDITS.md`. `afinfo` identified a valid mono MP3, approximately 5.3 seconds and 87 KB. This is a genuine owl recording per the publisher, not another oscillator imitation; no listening approval of the replacement is claimed yet.
+
+Removed the old oscillator and seven-second wall-clock interval. A single `ambience` timer now schedules the first call at 18 seconds and subsequent calls at 24 seconds, at gain 0.18. It skips new calls during stories/ghost reactions and preserves remaining delay during Pause; shared audio-context suspension freezes active calls. Attraction transitions clear only attraction-specific timer groups, preserving ambience without duplicate schedulers. Missing owl audio is skipped while wind/other effects remain available; the rejected synthetic call is never a fallback.
+
+Verification: `python3 -u /tmp/check_midway_recorded_owl.py` passed decoding all four assets, owl duration, Enter-only initialization, initial 18-second scheduling, countdown freeze/resume, active audio time freeze, 24-second rescheduling, a single timer across carousel/wagon changes, suppression during stories/ghost reactions, and blocked-owl-file behavior. Shortened delays in the focused test exercised the same scheduling path without waiting for each full interval. The complete normal-mode touch journey (`python3 -u /tmp/check_midway_journey.py`) also passed all three stories, input locking, Pause, completion, independent replay/full reset, and target sizing. `git diff --check` passed. Latest replacement remains local and uncommitted; listening and publication remain pending.
+
+### Requested hints, audio approval and peer report — October 26, 2026
+
+The Developer confirms audio works, resolving the earlier deferred sound review. They report one peer tested using their base-model iPhone 14: the experience worked, highlighting made discovery too easy, and the art looked noticeably AI-generated. The Developer accepts the art style. No browser version, exact playtest date, measured completion times, or detailed unassisted-observation record was supplied. This is a reported peer test, not one observed by the agent.
+
+Implemented the clarified discovery revision: retain the automatic opening lantern glow; after its correct tap, use faint neutral glints on all eight tappable objects, including decoys. A native Hint button requests a text clue first and explicit text plus stronger cyan target illumination second. Hint count resets on correct steps/attraction changes; Pause restores the requested text on resume; Hint is disabled during Pause, ghost reactions and stories, and hidden before power/after completion. Timed text remains at 12/20 seconds without automatically singling out later targets. Correct/incorrect reactions and narrative payoffs remain intact.
+
+Verification: the full normal-mode touch journey passed all three stories, ordered wagon steps, decoys, Pause, castle completion, replay/reset and target sizing. Focused requested-hint tests in normal and reduced-motion modes passed opening-only automatic glow, all eight glints, timed-text callback behavior without target reveal, two manual help levels, Pause text preservation, first-story hint reset/locking, completion hiding, and entering the carousel with fresh hints. Both stopped at the carousel step's exact-text assertion. Source inspection shows the UI intentionally prefixes the next clue with `1 of 3 clues awake.`, while that test expects only the clue. No application failure was established by this assertion; further retries were stopped after two failed runs as required by `AGENTS.md`. The later narrow-screen Hint layout assertions were not reached. Reviewed `/tmp/midway-requested-hint-normal.png`; controls and clue text fit at 390 × 844. Temporary commands: `python3 -u /tmp/check_midway_requested_hints.py` (also `--reduced`) and `python3 -u /tmp/check_midway_journey.py`. No new physical-phone or peer test of this revision is claimed; changes remain local.
+
+### Fog readability refinement — October 26, 2026
+
+The Developer reported that the fog did not look like it was drifting. The initial 3.2%-wide excursion moved only about 12 CSS pixels over 19 seconds at a 390px phone viewport, with an eased start. Increased travel to 14% over 12 seconds and scaled the fog image to 1.18 so its edges remain outside the scene. Existing opacity, layering, input handling, and reduced-motion behavior are unchanged.
+
+Verified with `python3 -u /tmp/check_midway_fog_drift.py`: measured 51.1 CSS pixels of travel, including 25.5 pixels by six seconds, and covered frame edges. Reviewed `/tmp/midway-fog-start.png` and `/tmp/midway-fog-six-seconds.png`; the fog changes position across the booth and midway without moving the underlying artwork. Fresh real-time playback passed animation advancement, Pause freeze, and Resume. The first test manually sought/played the animation for measurements, which overrode CSS playback state and invalidated its pause assertion; separating measurement from a fresh playback session resolved the test issue. The reduced-motion ambient suite also passed with static fog, working Pause, no scrolling, and 44px controls at three phone sizes. Sound listening remains deferred; this refinement is local and uncommitted.
+
+### Visible ambient effects — October 26, 2026
+
+The Developer approved drifting fog, occasional flying bats, and gentle light flicker. Reused the supplied transparent fog overlay for a slow 19-second horizontal drift. Replaced the three hidden starter bats with original SVG silhouettes in an above-art, non-interactive sky layer; they cross in small, staggered groups with quiet intervals. The supplied lighting overlay shimmers gently over 7.6 seconds only after the booth lantern restores power, preserving the dark opening. No new image or audio assets were introduced.
+
+All CSS animation is frozen before Enter. Pause now explicitly freezes pseudo-elements as well as elements, keeping the same shared control for ambience, hints, story motion, timers, and sound. Reduced-motion mode removes these three ambient animations and presents stationary fog/bats and steady powered lights.
+
+Verification: `python3 -u /tmp/check_midway_ambience.py` and its `--reduced` run passed: fog/bats are above opaque artwork; ambient layers do not intercept input; lights remain off until power; normal-mode visual properties change over time while reduced-motion properties remain static; Pause freezes sampled properties and Resume restores the correct behavior. No scrolling and 44px targets were checked at 320 × 568, 320 × 700, and 390 × 844. Reviewed screenshots `/tmp/midway-ambience-normal.png` and `/tmp/midway-ambience-reduced.png`; fog remains translucent, bats occupy the sky, and scene controls and clue targets remain readable.
+
+The complete normal-mode real-touch journey (`python3 -u /tmp/check_midway_journey.py`) also passed all three stories, delayed clues, pause/resume, input locking, completion, independent replay/full restart, and target sizing at two phone widths. `git diff --check` passed. These are browser tests, not a new physical-phone test or peer playtest. Sound listening remains deferred at the Developer's request. The ambient revision and prior touch-spacing fix remain local; neither has been committed or pushed yet.
+
+### Deferred sound review — October 26, 2026
+
+The Developer requested moving on without listening to the audio now. Keep an iPhone sound-balance check on the pre-submission checklist and bring it up during final review; it is intentionally deferred, not completed. No timed reminder has been scheduled.
+
+### Narrow-screen wagon target spacing — October 26, 2026
+
+Investigated the previously failed missing-audio test. At 320 × 700, `elementFromPoint` and captured click events showed that tapping the crystal ball's center actually activated the later-painted wagon-lantern button. Both targets' percentage positions combined with 44px minimum dimensions caused an overlap. Progress stayed at one ticket clue, so the story never began; audio failure was not the cause. At 390 × 844, the first story completed with all three sound downloads blocked.
+
+With Developer approval, changed the two CSS touch positions to use opposite sides of a shared 45.6% artwork-height divider, with centers at least 48px apart. Both buttons retain 44px minimum dimensions and a 4px vertical gap. Original artwork and scene-light positions are unchanged; no audio or story logic was changed.
+
+The spacing test passed at 320 × 568, 320 × 700, 375 × 667, 390 × 844, and 430 × 932: all eight targets stayed at least 44px and inside the viewport; the wagon pair had a 4px gap; both button centers and both original artwork centers hit the intended button. Actual dispatched touches completed the moon → lantern → crystal trigger at every size, with audio downloads blocked. The test's first run left controls disabled between isolated cases; after explicitly re-enabling them in test setup, all cases passed. Temporary command: `python3 -u /tmp/check_midway_target_spacing.py`.
+
+The unchanged `python3 -u /tmp/check_midway_audio.py` then passed the complete normal-mode three-story journey, audio decode/loop/pause checks, and the formerly failing blocked-audio first-story completion at 320 × 700. This resolves the missing-file recovery concern recorded in the older audio checkpoint below. `git diff --check` passed. No new reduced-motion or physical-iPhone test is claimed. This touch-spacing revision remains local and uncommitted; the CC0 audio checkpoint is already committed but not pushed.
 
 ### Sourced audio and reported phone test — October 26, 2026
 

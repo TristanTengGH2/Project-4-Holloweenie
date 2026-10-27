@@ -22,19 +22,25 @@ python3 -m http.server 4173
 
 Open http://localhost:4173 and press Enter on the start screen. Stop the server with Ctrl+C. No package installation or build command is required.
 
+Keyboard: after clicking Enter, press any arrow key to focus the booth lantern without pressing Tab first. Further arrows move to nearby objects in that direction; Enter or Space activates them. At an edge, focus stays put. Tab still moves through objects and controls, including Hint, Pause, replay and attraction navigation. Arrow keys do not activate objects or replace those controls' normal behavior.
+
 ## Prototype status
 
 The scene opens with its lighting overlay off and a flickering booth lantern as the first clue. Tap the lantern to switch on the midway's lights. After the ticket story, use **Replay · lights out** to reset the opening. Reduced-motion mode uses a steady lantern.
 
-After power is restored, the green crystal ball pulses. Its correct tap releases a large friendly ghost that flies into the pumpkin, whose eyes and grin turn green for the final tap. Tapping the pumpkin turns its face orange-gold, lights the booth window, and launches the ticket story. The horse, bell, and moon sign intermittently glint and play harmless visual reactions when tapped. Hints sit near the bottom of the scene so the attractions stay visible. See `plan.md` for browser verification results and remaining physical-phone checks.
+After power is restored, all eight tappable objects get faint neutral glints. Hint gives a text clue; a second press adds the stronger target glow. Hint requests reset each step. A correct crystal-ball tap releases a large friendly ghost that flies into the pumpkin, whose eyes and grin turn green for the final tap. Tapping the pumpkin turns its face orange-gold, lights the booth window, and launches the ticket story. The horse, bell, and moon sign play harmless visual reactions outside their real sequences. Hints sit near the bottom so the attractions stay visible. See `plan.md` for verification results and remaining checks.
 
 All three stories are implemented. The Last Ticket uses the booth lantern → green crystal ball → pumpkin face and reveals a horse-stamped ticket. Choose **Explore the carousel**, then tap bell → carousel roof light → white horse for the guest's last ride. Choose **Follow her wish**, then tap crescent-moon sign → wagon-entrance lantern → crystal ball to restore the castle. The sequences last 8.2, 8.2, and 8.7 seconds respectively. Bell/horse/moon targets act as decoys outside their real story sequences. Pause greys out the scene and exposes Resume; each story can replay, and returning to the booth resets the visit. Cyan cues start after six seconds; stronger text hints follow at 12 and 20 seconds. Memories restored counts completed stories separately from the current three-step trigger.
 
-The full journey has passed normal and reduced-motion browser checks with emulated touch. The Developer approved publication and subsequently reported that the complete experience works on their iPhone on October 26, 2026. Device model, browser version, and individual results were not supplied. No peer playtest is recorded.
+The full journey has passed normal and reduced-motion browser checks with emulated touch. The latest normal journey also passed after the requested-hint revision; focused hint-test limits are recorded in `plan.md`. The Developer reports that audio works and that one peer tested on their base-model iPhone 14: the experience worked, highlighting was too easy, and the art looked noticeably AI-generated. The Developer accepts the art style. This is reported feedback, not an independently observed test of the latest revision.
 
-CC0 wind, bell, and gust assets now accompany the original synthesized melody and feedback. See [credits and verified audio sources](CREDITS.md). The audio revision still needs an iPhone listening check and publication.
+CC0 wind, bell, and gust assets accompany the original synthesized melody and feedback. See [credits and verified audio sources](CREDITS.md). The Developer's audio approval resolves the previously deferred listening check.
 
-This is a work-in-progress submission, not a claim that all brief requirements have passed. Peer playtesting, visible ambient-effects review, remaining visual/template provenance, and the final debrief remain open.
+The synthetic owl has been replaced with a Developer-approved NPS public-domain spotted-owl recording. Its first quiet call occurs after 18 seconds, then at 24-second intervals during exploration; Pause preserves the countdown and playback position. Missing owl audio is skipped rather than replaced with the rejected synthetic sound.
+
+Three visible ambient effects sit within the artwork: slowly drifting fog, occasional flying bats, and gentle light shimmer after power returns. They begin after Enter, freeze with Pause, and become static under reduced motion. Final phone visual review of the latest revision remains a submission check.
+
+This is a work-in-progress submission, not a claim that all brief requirements have passed. Detailed peer notes, final phone review of the newest changes, remaining visual/template provenance, and the course-provided debrief remain open. See the [current requirement checklist](plan.md#current-requirement-checklist).
 
 ## Project documents
 

@@ -97,9 +97,52 @@ button {
 .scene-art-background { z-index: 0; }
 .scene-art-foreground { z-index: 1; }
 .scene-art-booth { z-index: 2; }
-.scene-art-fog { z-index: 3; }
+.scene-art-fog {
+  z-index: 3;
+  transform: scale(1.18);
+  opacity: 0.8;
+  animation: midwayFogDrift 12s ease-in-out infinite alternate;
+}
 .scene-art-lighting { z-index: 4; opacity: 0; }
-.scene.has-power .scene-art-lighting { opacity: 1; }
+.scene.has-power .scene-art-lighting { opacity: 1; animation: midwayLightShimmer 7.6s ease-in-out infinite; }
+
+/* Atmosphere belongs above the opaque art but below story effects and controls. */
+.ambient-bats {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ambient-bat {
+  fill: #0b1020;
+  opacity: 0;
+  animation: midwayBatFlight 24s linear infinite;
+}
+.ambient-bat-one { --bat-height: 280px; }
+.ambient-bat-two { --bat-height: 350px; animation-delay: 1.2s; }
+.ambient-bat-three { --bat-height: 220px; animation-delay: 12s; }
+
+@keyframes midwayFogDrift {
+  /* Overscan hides image edges while the texture travels visibly on a phone. */
+  from { transform: translateX(-7%) scale(1.18); opacity: 0.7; }
+  to { transform: translateX(7%) scale(1.18); opacity: 0.88; }
+}
+@keyframes midwayLightShimmer {
+  0%, 100% { opacity: 0.94; }
+  35% { opacity: 1; }
+  55% { opacity: 0.86; }
+  72% { opacity: 0.98; }
+}
+@keyframes midwayBatFlight {
+  0% { transform: translate(-70px, var(--bat-height)) rotate(-8deg); opacity: 0; }
+  2% { opacity: 0.85; }
+  10% { transform: translate(470px, calc(var(--bat-height) - 45px)) rotate(5deg); opacity: 0.85; }
+  20% { transform: translate(1010px, var(--bat-height)) rotate(-5deg); opacity: 0; }
+  100% { transform: translate(1010px, var(--bat-height)); opacity: 0; }
+}
 
 /* Isolate the existing lantern illumination without changing the aligned PNG. */
 .lantern-beacon {
@@ -128,6 +171,7 @@ button {
 .replay-button[hidden] { display: none; }
 
 .midway-interaction-map {
+  --wagon-target-divider: 45.6%;
   position: absolute;
   inset: 0;
   z-index: 6;
@@ -151,6 +195,27 @@ button {
 }
 
 .midway-hotspot:disabled { pointer-events: none; }
+
+/* The same faint glint marks every tappable object, not the next correct answer. */
+.midway-hotspot::before {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #fff4c7 0%, #ffe1a855 35%, transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+}
+.scene.has-power:not(.story-playing):not(.crystal-releasing) .midway-hotspot::before {
+  animation: tappableGlint 6s ease-in-out var(--glint-delay, 0s) infinite;
+}
+@keyframes tappableGlint {
+  0%, 55%, 100% { opacity: 0.12; }
+  75% { opacity: 0.4; }
+}
+.hint-button { padding: 8px 14px; min-height: 44px; }
+.hint-button:disabled { opacity: 0.55; cursor: default; }
+.scene.story-playing .hint-button { visibility: hidden; }
 
 .object-outline {
   position: absolute;
@@ -198,13 +263,15 @@ button {
 
 /* Centers and dimensions are percentages of the shared 941 × 1672 artwork. */
 .hotspot-booth-lantern { left: 45.5%; top: 51.5%; width: 8%; height: 5.5%; }
-.hotspot-crystal-ball { left: 87.8%; top: 47.6%; width: 8.5%; height: 5.2%; }
+.hotspot-crystal-ball { left: 87.8%; top: max(47.6%, calc(var(--wagon-target-divider) + 24px)); width: 8.5%; height: 5.2%; }
 .hotspot-pumpkin-face { left: 50.3%; top: 44.5%; width: 24%; height: 6.4%; }
 .hotspot-horse { left: 24%; top: 47.8%; width: 15%; height: 6%; }
 .hotspot-bell { left: 49%; top: 21%; width: 7%; height: 4%; }
 .hotspot-moon-sign { left: 78.5%; top: 25.6%; width: 7%; height: 4%; }
 .hotspot-carousel-light { left: 32%; top: 37.5%; width: 7%; height: 4.5%; }
-.hotspot-wagon-lantern { left: 93%; top: 43.6%; width: 6%; height: 5%; }
+/* Keep the neighboring 44px buttons on opposite sides of one shared divider,
+   with a 4px gap. Only touch bounds move; the artwork's light effects stay put. */
+.hotspot-wagon-lantern { left: 93%; top: min(43.6%, calc(var(--wagon-target-divider) - 24px)); width: 6%; height: 5%; }
 
 .journey-progress { align-self: flex-start; color: #d8eaff; font-size: 0.65rem; text-shadow: 0 1px 4px #000; }
 
@@ -502,9 +569,6 @@ button {
   stroke-width: 1;
   opacity: 0;
   filter: drop-shadow(0 0 6px #ba79ff);
-}
-:where(.scene.has-power:not(.story-playing):not(.crystal-releasing)) .object-reaction {
-  animation: decoyGlimmer 6s ease-in-out infinite;
 }
 .scene.has-power .hotspot-bell .object-reaction { animation-delay: 1.6s; fill: #ffd38a; }
 .scene.has-power .hotspot-moon-sign .object-reaction { animation-delay: 3.2s; }
@@ -1010,20 +1074,6 @@ button {
 .bough-1 { left: 16px; bottom: 62px; }
 .bough-2 { right: 14px; bottom: 66px; }
 
-.bat {
-  position: absolute;
-  width: 28px;
-  height: 16px;
-  background: linear-gradient(180deg, rgba(20, 27, 38, 0.92), rgba(7, 12, 18, 0.9));
-  clip-path: polygon(0 60%, 24% 30%, 52% 60%, 78% 30%, 100% 60%, 86% 62%, 62% 52%, 35% 52%, 12% 62%);
-  opacity: 0.85;
-  animation: flutter 6s ease-in-out infinite alternate;
-}
-
-.bat-1 { top: 112px; left: 104px; }
-.bat-2 { top: 148px; left: 220px; animation-delay: 1.4s; }
-.bat-3 { top: 126px; right: 90px; animation-delay: 2.6s; }
-
 .spark {
   position: absolute;
   width: 8px;
@@ -1218,10 +1268,13 @@ button {
   animation: fireUp 0.7s ease-in-out 2 alternate;
 }
 
+.scene:not(.is-started) *,
+.scene:not(.is-started) *::before,
+.scene:not(.is-started) *::after,
 .scene.is-paused *,
+.scene.is-paused *::before,
 .scene.is-paused *::after,
 .scene.is-paused .story-target,
-.scene.is-paused .bat,
 .scene.is-paused .mist,
 .scene.is-paused .cloud,
 .scene.is-paused .spark {
@@ -1386,6 +1439,12 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scene-art-fog { animation: none; transform: none; opacity: 0.8; }
+  .scene.has-power .scene-art-lighting { animation: none; opacity: 1; }
+  .ambient-bat { animation: none; opacity: 0.65; }
+  .ambient-bat-one { transform: translate(310px, 280px); }
+  .ambient-bat-two { transform: translate(540px, 350px); }
+  .ambient-bat-three { transform: translate(780px, 220px); }
   .hint-shimmer .clue-sparks, .hint-outline .clue-sparks { animation: none; opacity: 1; transform: translateX(-50%); }
   .scene.cue-moon-sign .hotspot-moon-sign .object-reaction { animation: none; opacity: 0.75; }
   .scene.cue-wagon-lantern .wagon-lantern-heart, .scene.story-fortune .crystal-heart { animation: none; opacity: 1; }
@@ -1418,7 +1477,7 @@ button {
   .scene.spirit-arrived.cue-pumpkin .pumpkin-spirit-light { animation: none; opacity: 0.95; }
   .scene.pumpkin-awake .pumpkin-spirit-light,
   .scene.pumpkin-awake .booth-window-light { animation: none; opacity: 0.95; }
-  .scene.has-power:not(.story-playing):not(.crystal-releasing) .object-reaction { animation: none; opacity: 0.22; }
+  .scene.has-power:not(.story-playing):not(.crystal-releasing) .midway-hotspot::before { animation: none; opacity: 0.2; }
   .scene .midway-hotspot.decoy-active .object-reaction { animation: none; opacity: 0.9; }
   .midway-hotspot.decoy-active::after { animation: none; opacity: 1; }
   .scene.is-started.cue-lantern:not(.has-power) .lantern-beacon {

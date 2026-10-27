@@ -43,6 +43,15 @@
               alt=""
             />
 
+            <svg class="ambient-bats" viewBox="0 0 941 1672" aria-hidden="true" focusable="false">
+              <defs>
+                <path id="ambient-bat-shape" d="M-38 -16 Q-29 -6 -18 -10 L-10 1 L-5 -7 L0 -2 L5 -7 L10 1 L18 -10 Q29 -6 38 -16 L29 9 Q19 2 13 14 L0 8 L-13 14 Q-19 2 -29 9 Z" />
+              </defs>
+              <use class="ambient-bat ambient-bat-one" href="#ambient-bat-shape" />
+              <use class="ambient-bat ambient-bat-two" href="#ambient-bat-shape" />
+              <use class="ambient-bat ambient-bat-three" href="#ambient-bat-shape" />
+            </svg>
+
             <div class="scene-reactions" aria-hidden="true">
               <img class="scene-art-layer carousel-bulbs" src="reference/halloween_pixel_aligned_layers_only/05_emitted_lighting.png" alt="" />
               <div class="carousel-light-heart"></div>
@@ -68,7 +77,7 @@
               </svg>
             </div>
 
-            <div class="midway-interaction-map" role="group" aria-label="Explore the midway">
+            <div class="midway-interaction-map" role="group" aria-label="Explore the midway. Arrow keys move between objects; Enter or Space activates them.">
               <button
                 class="midway-hotspot hotspot-booth-lantern"
                 type="button"
@@ -161,9 +170,6 @@
             <div class="bough bough-2"></div>
           </div>
 
-          <div class="bat bat-1" aria-hidden="true"></div>
-          <div class="bat bat-2" aria-hidden="true"></div>
-          <div class="bat bat-3" aria-hidden="true"></div>
           <div class="spark spark-1"></div>
           <div class="spark spark-2"></div>
           <div class="spark spark-3"></div>
@@ -181,6 +187,7 @@
               </span>
             </div>
             <div class="hint" id="hintText">The dark is listening for a first clue.</div>
+            <button class="replay-button hint-button" id="hintButton" type="button" aria-controls="hintText" hidden>Hint</button>
             <button class="replay-button" id="replayButton" type="button" hidden>Replay · lights out</button>
             <button class="replay-button" id="carouselButton" type="button" hidden>Explore the carousel</button>
           </div>

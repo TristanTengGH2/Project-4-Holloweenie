@@ -8,6 +8,7 @@ const carouselButton = document.getElementById('carouselButton');
 const attractionLabel = document.getElementById('attractionLabel');
 const progressLabel = document.getElementById('progressLabel');
 const hintText = document.getElementById('hintText');
+const hintButton = document.getElementById('hintButton');
 const storyOverlay = document.getElementById('storyOverlay');
 const storyTitle = document.getElementById('storyTitle');
 const storySpeaker = document.getElementById('storySpeaker');
@@ -18,6 +19,7 @@ const storyProgress = document.getElementById('storyProgress');
 const progressSteps = [...document.querySelectorAll('.progress-step')];
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const arrowDirections = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
 
 let isStarted = false;
 let isPaused = false;
@@ -25,12 +27,15 @@ let storyPlaying = false;
 let crystalPlaying = false;
 let audioContext = null;
 let ambientWind = null;
-let owlTimer = null;
+let ambientCallsStarted = false;
 let activeStoryHint = '';
+let requestedHints = 0;
+let hintStepKey = '';
 const soundBuffers = new Map();
 let soundLoading = null;
 
 const timerGroups = {
+  ambience: [],
   hints: [],
   story: [],
   feedback: [],
@@ -136,6 +141,11 @@ function clearTimerGroup(group) {
   timerGroups[group] = [];
 }
 
+function clearAttractionTimers() {
+  // Ambient calls span the whole visit; changing attractions must not cancel them.
+  Object.keys(timerGroups).filter((group) => group !== 'ambience').forEach(clearTimerGroup);
+}
+
 function pauseTimers() {
   Object.values(timerGroups).flat().forEach((timer) => {
     if (timer.timeoutId === null) return;
@@ -164,7 +174,7 @@ function getExplorationHint() {
     return 'An unused ticket, stamped with a horse. Its owner’s favorite ride must remember her.';
   }
 
-  return currentHints()[activeAttraction.current][0];
+  return currentHints()[activeAttraction.current][requestedHints];
 }
 
 function setMidwayHotspotsEnabled(enabled) {
@@ -173,6 +183,21 @@ function setMidwayHotspotsEnabled(enabled) {
   });
   replayButton.disabled = !enabled;
   carouselButton.disabled = !enabled;
+  updateHintButton(enabled);
+}
+
+function updateHintButton(enabled = isStarted && !isPaused && !storyPlaying && !crystalPlaying) {
+  hintButton.hidden = !isStarted || !scene.classList.contains('has-power') || activeAttraction.complete;
+  hintButton.disabled = !enabled || activeAttraction.complete || requestedHints >= 2;
+  hintButton.textContent = requestedHints >= 2 ? 'Hint shown' : requestedHints === 1 ? 'Stronger hint' : 'Hint';
+}
+
+function showRequestedGlow() {
+  const name = activeAttraction.sequence[activeAttraction.current];
+  const target = midwayHotspots.find((hotspot) => hotspot.dataset.midwayTarget === name);
+  if (!target) return;
+  target.classList.add('hint-outline');
+  scene.classList.add(cueForTarget[name]);
 }
 
 function setPaused(paused) {
@@ -228,9 +253,10 @@ function makeNoiseBuffer(ctx) {
 function loadRecordedAudio(ctx) {
   if (soundLoading) return soundLoading;
   // Decode after Enter unlocks audio. Failed files leave the synthetic fallback intact.
-  soundLoading = Promise.all(['wind', 'bell', 'gust'].map(async (name) => {
+  const audioFiles = { wind: 'wind.wav', bell: 'bell.wav', gust: 'gust.wav', owl: 'owl.mp3' };
+  soundLoading = Promise.all(Object.entries(audioFiles).map(async ([name, file]) => {
     try {
-      const response = await fetch(`assets/audio/${name}.wav`);
+      const response = await fetch(`assets/audio/${file}`);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const buffer = await ctx.decodeAudioData(await response.arrayBuffer());
       soundBuffers.set(name, buffer);
@@ -256,7 +282,7 @@ function loadRecordedAudio(ctx) {
         }
       }
     } catch (error) {
-      console.warn(`Using fallback audio for ${name}:`, error.message);
+      console.warn(name === 'owl' ? 'Owl recording unavailable; keeping wind ambience.' : `Using fallback audio for ${name}:`, error.message);
     }
   }));
   return soundLoading;
@@ -303,24 +329,18 @@ function startAmbientAudio() {
   }
   loadRecordedAudio(ctx);
 
-  if (!owlTimer) {
-    owlTimer = window.setInterval(() => {
-      if (!isStarted || isPaused || storyPlaying) return;
-      const owlCtx = createAudioContext();
-      const oscillator = owlCtx.createOscillator();
-      const gain = owlCtx.createGain();
-      oscillator.type = 'triangle';
-      oscillator.frequency.setValueAtTime(240, owlCtx.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(110, owlCtx.currentTime + 0.7);
-      gain.gain.setValueAtTime(0.0001, owlCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.08, owlCtx.currentTime + 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.0001, owlCtx.currentTime + 1.2);
-      oscillator.connect(gain);
-      gain.connect(owlCtx.destination);
-      oscillator.start();
-      oscillator.stop(owlCtx.currentTime + 1.3);
-    }, 7000);
+  if (!ambientCallsStarted) {
+    ambientCallsStarted = true;
+    scheduleOwlCall(18000);
   }
+}
+
+function scheduleOwlCall(delay = 24000) {
+  scheduleTimer('ambience', delay, () => {
+    // Do not compete with story dialogue or fall back to the rejected synthetic call.
+    if (isStarted && !isPaused && !storyPlaying && !crystalPlaying) playRecordedSound('owl', 0.18);
+    scheduleOwlCall();
+  });
 }
 
 function playTone({ frequency = 180, duration = 0.26, type = 'sine', volume = 0.09 }) {
@@ -350,6 +370,8 @@ function setStoryOverlay(title, text, visible = true, speaker = 'The Night Atten
 }
 
 function updateProgress() {
+  syncHintStep();
+  updateHintButton();
   progressSteps.forEach((step, index) => {
     step.classList.toggle('complete', index < activeAttraction.current);
   });
@@ -359,7 +381,17 @@ function updateProgress() {
   journeyProgress.textContent = `Memories restored: ${recoveredMemories.size} of 3`;
 }
 
+function syncHintStep() {
+  const stepKey = `${activeAttraction.title}:${activeAttraction.current}`;
+  if (stepKey !== hintStepKey) {
+    hintStepKey = stepKey;
+    requestedHints = 0;
+  }
+}
+
 function resetProgressiveHints() {
+  syncHintStep();
+  updateHintButton();
   clearTimerGroup('hints');
   clearVisualCues();
   midwayHotspots.forEach((hotspot) => {
@@ -373,18 +405,22 @@ function resetProgressiveHints() {
   ));
   if (!expectedTarget) return;
 
-  scheduleTimer('hints', 6000, () => {
-    expectedTarget.classList.add('hint-shimmer');
-    const cue = cueForTarget[expectedTarget.dataset.midwayTarget];
-    scene.classList.add(cue);
-  });
+  // Only the opening lantern guides automatically; later target glows are requested.
+  const opening = activeAttraction === lastTicket && lastTicket.current === 0;
+  if (opening) {
+    scheduleTimer('hints', 6000, () => {
+      expectedTarget.classList.add('hint-shimmer');
+      scene.classList.add('cue-lantern');
+    });
+  } else if (requestedHints >= 2) {
+    showRequestedGlow();
+  }
   scheduleTimer('hints', 12000, () => {
-    setHint(currentHints()[activeAttraction.current][1]);
+    if (requestedHints === 0) setHint(currentHints()[activeAttraction.current][1]);
   });
   scheduleTimer('hints', 20000, () => {
-    expectedTarget.classList.remove('hint-shimmer');
-    expectedTarget.classList.add('hint-outline');
-    setHint(currentHints()[activeAttraction.current][2]);
+    if (requestedHints > 0) return;
+    setHint(opening ? currentHints()[0][2] : 'Still searching? Tap Hint for another clue; a second request will show you where to look.');
   });
 }
 
@@ -410,7 +446,7 @@ function enterCarousel() {
   clearFortuneState();
   recoveredMemories.delete(carouselStory);
   recoveredMemories.delete(fortuneStory);
-  Object.keys(timerGroups).forEach(clearTimerGroup);
+  clearAttractionTimers();
   clearVisualCues();
   clearCarouselState();
   activeAttraction = carouselStory;
@@ -528,7 +564,7 @@ function clearFortuneState() {
 }
 
 function enterFortune() {
-  Object.keys(timerGroups).forEach(clearTimerGroup);
+  clearAttractionTimers();
   clearVisualCues();
   clearFortuneState();
   recoveredMemories.delete(fortuneStory);
@@ -595,6 +631,8 @@ function startFortuneStory() {
 }
 
 function resetLastTicket() {
+  hintStepKey = '';
+  requestedHints = 0;
   recoveredMemories.clear();
   clearFortuneState();
   activeAttraction = lastTicket;
@@ -789,14 +827,57 @@ function handleMidwayTap(event) {
   startLastTicketStory();
 }
 
+function moveHotspotFocus(event) {
+  const direction = arrowDirections[event.key];
+  if (!direction || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+  if (!isStarted || isPaused || storyPlaying || crystalPlaying || event.currentTarget.disabled) return;
+
+  event.preventDefault();
+  const origin = event.currentTarget.getBoundingClientRect();
+  let nearest = null;
+  let bestScore = Infinity;
+  midwayHotspots.forEach((hotspot) => {
+    if (hotspot === event.currentTarget || hotspot.disabled) return;
+    const bounds = hotspot.getBoundingClientRect();
+    const dx = bounds.x + bounds.width / 2 - origin.x - origin.width / 2;
+    const dy = bounds.y + bounds.height / 2 - origin.y - origin.height / 2;
+    const forward = dx * direction[0] + dy * direction[1];
+    if (forward <= 1) return;
+    // Prefer nearby objects in the pressed direction over distant diagonal ones.
+    const sideways = Math.abs(dx * direction[1] - dy * direction[0]);
+    const score = Math.hypot(dx, dy) + sideways * 2;
+    if (score < bestScore) {
+      bestScore = score;
+      nearest = hotspot;
+    }
+  });
+  nearest?.focus({ preventScroll: true });
+}
+
+function startHotspotFocus(event) {
+  if (event.defaultPrevented || !arrowDirections[event.key] || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+  if (!isStarted || isPaused || storyPlaying || crystalPlaying) return;
+  // A pointer-started visit may leave focus on the hidden Enter button or body.
+  // Do not steal arrow keys from Hint, Pause, or any other interactive control.
+  const focused = document.activeElement;
+  if (focused !== enterButton && focused?.closest('button, a, input, textarea, select, [contenteditable]')) return;
+  const firstTarget = midwayHotspots.find((hotspot) => !hotspot.disabled);
+  if (!firstTarget) return;
+  event.preventDefault();
+  firstTarget.focus({ preventScroll: true });
+}
+
 function bindMidwayInteractions() {
   midwayHotspots.forEach((hotspot) => {
     hotspot.addEventListener('click', handleMidwayTap);
+    hotspot.addEventListener('keydown', moveHotspotFocus);
   });
+  document.addEventListener('keydown', startHotspotFocus);
 }
 
 function prepareMidwayInteractionMap() {
-  midwayHotspots.forEach((hotspot) => {
+  midwayHotspots.forEach((hotspot, index) => {
+    hotspot.style.setProperty('--glint-delay', `${-index * 0.7}s`);
     const sparks = document.createElement('span');
     sparks.className = 'clue-sparks';
     sparks.setAttribute('aria-hidden', 'true');
@@ -816,7 +897,7 @@ function prepareMidwayInteractionMap() {
   });
 }
 
-function beginExperience() {
+function beginExperience(event) {
   isStarted = true;
   scene.classList.add('is-started');
   startScreen.classList.add('hidden');
@@ -825,9 +906,18 @@ function beginExperience() {
   startAmbientAudio();
   setHint(getExplorationHint());
   resetProgressiveHints();
+  if (event?.detail === 0) midwayHotspots[0].focus({ preventScroll: true });
 }
 
 enterButton.addEventListener('click', beginExperience);
+hintButton.addEventListener('click', () => {
+  if (!isStarted || isPaused || storyPlaying || crystalPlaying || activeAttraction.complete || !scene.classList.contains('has-power')) return;
+  requestedHints = Math.min(2, requestedHints + 1);
+  clearTimerGroup('hints');
+  setHint(currentHints()[activeAttraction.current][requestedHints]);
+  if (requestedHints === 2) showRequestedGlow();
+  updateHintButton();
+});
 replayButton.addEventListener('click', () => {
   if (!isStarted || isPaused || storyPlaying) return;
   if (activeAttraction === fortuneStory) {
